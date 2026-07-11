@@ -74,6 +74,6 @@ Please read our CONTRIBUTING.md for detailed guidelines.
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
 ## 📞 Contact & Support
-- Project Lead: Department of Computer Science and Information Technology, Kalasin University.
-- Issue Tracker: Please use the GitHub Issues page for bugs or feature requests.
-- Email Support: paitoon.th@ksu.ac.th
+- **Project Lead:** Department of Computer Science and Information Technology, Faculty of Science and Health Technology, Kalasin University, Thailand.
+- **Issue Tracker:** Please use the GitHub Issues page for bugs or feature requests.
+- **Email Support:** paitoon.th@ksu.ac.th
