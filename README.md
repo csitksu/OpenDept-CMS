@@ -41,22 +41,88 @@ The project uses environment variables for configuration. You need to create a .
 
 3. Open the .env file in your text editor and update the variables (e.g., Database credentials, JWT Secret Keys) to match your local setup.
 
-### 2. Build and spin up the containers
+### 2. Database Migrations
+
+This project uses **Alembic** for database schema migrations. Migrations are automatically applied when containers start, but you can also run them manually:
+
+```bash
+# Apply all pending migrations
+alembic upgrade head
+
+# Create a new migration (after modifying models)
+alembic revision --autogenerate -m "Description of changes"
+
+# View migration history
+alembic history
+
+# Downgrade to a specific revision
+alembic downgrade -1
+```
+
+For more details, see the [Alembic documentation](https://alembic.sqlalchemy.org/).
+
+### 3. Build and spin up the containers
 Once your .env file is ready, you can build and start the entire application stack using Docker Compose. Run this command in the root directory:
 
 docker-compose up -d --build
 
 Note: The -d flag runs containers in the background, and --build ensures images are built with your latest code changes.
 
-### 3. Access the Application
+The docker-compose service automatically:
+- Creates the database schema using Alembic migrations
+- Seeds the database with initial development data
+- Starts the FastAPI backend and Next.js frontend
+
+### 4. Access the Application
 After the containers are successfully running, you can access the system via your web browser:
 
 - Frontend Portal (Next.js): http://localhost:3000
 - Backend API Docs (Swagger UI): http://localhost:8000/docs
-- Database Admin Panel: http://localhost:8080
+- Database (MySQL): localhost:3306
 
 To stop the application, run:
 docker-compose down
+
+### 5. Local Development (Without Docker)
+
+To run the backend locally without Docker:
+
+```bash
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set environment variables
+cp .env.example .env
+
+# Apply migrations
+alembic upgrade head
+
+# (Optional) Seed the database
+python seed.py
+
+# Run the server
+uvicorn main:app --reload
+```
+
+Backend API will be available at http://localhost:8000
+
+## 🗄️ Database Schema
+
+The database schema includes the following core entities:
+
+- **Users**: Students and faculty members
+- **Roles**: Role-based access control (student, faculty, admin, industry_partner)
+- **Departments**: Academic departments
+- **Courses**: Individual courses within departments
+- **Curricula**: Degree programs that group courses
+- **JobPosts**: Job opportunities from industry partners
+- **Applications**: Student applications to job postings
+
+For the complete schema diagram, refer to the migration files in `alembic/versions/`
 
 ---
 
