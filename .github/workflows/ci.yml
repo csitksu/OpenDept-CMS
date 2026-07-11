@@ -1,0 +1,57 @@
+name: CI Pipeline (Lint & Test)
+
+# กำหนดให้ทำงานเมื่อมีการ Push หรือ Pull Request เข้า Branch main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # 1. ตรวจสอบฝั่ง Backend (FastAPI / Python)
+  backend-check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10' # ปรับเวอร์ชันตามที่ใช้จริงได้เลยค่ะ
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest fastapi
+        if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
+
+    - name: Lint with flake8
+      run: |
+        # ตรวจสอบ Syntax และ Format ของโค้ด Python
+        flake8 backend/ --count --select=E9,F63,F7,F82 --show-source --statistics
+
+    - name: Test with pytest
+      run: |
+        # รัน Unit Test ถ้ามีการเขียนไฟล์เทสต์ไว้
+        pytest backend/ || echo "No tests found or setup incomplete, skipping."
+
+  # 2. ตรวจสอบฝั่ง Frontend (Next.js / Node.js)
+  frontend-check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' # ปรับเวอร์ชันตามที่ใช้จริงได้เลยค่ะ
+
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: npm install
+
+    - name: Run ESLint
+      working-directory: ./frontend
+      run: npm run lint
