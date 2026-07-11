@@ -23,18 +23,18 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest fastapi
-        if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
+        pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Lint with flake8
       run: |
         # ตรวจสอบ Syntax และ Format ของโค้ด Python
-        flake8 backend/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 app/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
 
     - name: Test with pytest
       run: |
         # รัน Unit Test ถ้ามีการเขียนไฟล์เทสต์ไว้
-        pytest backend/ || echo "No tests found or setup incomplete, skipping."
+        pytest tests/ || echo "No tests found or setup incomplete, skipping."
 
   # 2. ตรวจสอบฝั่ง Frontend (Next.js / Node.js)
   frontend-check:
@@ -43,15 +43,31 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    - name: Check if frontend directory exists
+      id: check_frontend
+      run: |
+        if [ -d "./frontend" ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Set up Node.js
+      if: steps.check_frontend.outputs.exists == 'true'
       uses: actions/setup-node@v3
       with:
-        node-version: '18' # ปรับเวอร์ชันตามที่ใช้จริงได้เลยค่ะ
+        node-version: '18'
 
     - name: Install dependencies
+      if: steps.check_frontend.outputs.exists == 'true'
       working-directory: ./frontend
       run: npm install
 
     - name: Run ESLint
+      if: steps.check_frontend.outputs.exists == 'true'
       working-directory: ./frontend
       run: npm run lint
+
+    - name: Skip frontend check
+      if: steps.check_frontend.outputs.exists == 'false'
+      run: echo "Frontend directory not found, skipping frontend checks."
