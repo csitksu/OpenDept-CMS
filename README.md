@@ -42,6 +42,45 @@ Ensure you have the following installed on your system:
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - Git
 
+Set up Environment Variables:
+Copy the provided .env.example file and configure your credentials.
+
+Bash
+cp .env.example .env
+Build and spin up the containers:
+
+Bash
+docker-compose up -d --build
+Access the Application:
+
+Frontend Portal: http://localhost:3000
+
+Backend API Docs (Swagger UI): http://localhost:8000/docs
+
+Database Admin Panel: http://localhost:8080
+
+🤝 Contributing
+We welcome contributions from developers, students, educators, and open-source enthusiasts worldwide! Here is how you can help:
+
+Fork the Project.
+
+Create your Feature Branch (git checkout -b feature/AmazingFeature).
+
+Commit your Changes (git commit -m 'feat: Add some AmazingFeature').
+
+Push to the Branch (git push origin feature/AmazingFeature).
+
+Open a Pull Request.
+
+Please read our CONTRIBUTING.md for details on branch naming conventions, commit guidelines, and the pull request process.
+
+📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+📞 Contact & Support
+Project Lead: Department of Computer Science and Information Technology, Kalasin University
+
+Issue Tracker: Report a bug or Request a feature
 ### Installation via Docker (Recommended)
 
 1. **Clone the repository:**
