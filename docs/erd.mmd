@@ -1,0 +1,175 @@
+erDiagram
+  USERS {
+    int id PK
+    string full_name
+    string email UNIQUE
+    string username
+    string hashed_password
+    datetime created_at
+    datetime updated_at
+    int organization_id FK
+  }
+
+  ROLES {
+    int id PK
+    string name UNIQUE
+    string description
+  }
+
+  ROLE_USERS {
+    int user_id FK
+    int role_id FK
+    datetime assigned_at
+  }
+
+  PERMISSIONS {
+    int id PK
+    string name UNIQUE
+    string description
+  }
+
+  ROLE_PERMISSIONS {
+    int role_id FK
+    int permission_id FK
+  }
+
+  ORGANIZATIONS {
+    int id PK
+    string name
+    string slug
+  }
+
+  DEPARTMENTS {
+    int id PK
+    string name
+    int organization_id FK
+  }
+
+  COURSES {
+    int id PK
+    string code UNIQUE
+    string title
+    text description
+    int department_id FK
+    int owner_id FK
+  }
+
+  CURRICULA {
+    int id PK
+    string name
+    text description
+    int department_id FK
+  }
+
+  CURRICULUM_COURSES {
+    int curriculum_id FK
+    int course_id FK
+    int sequence_order
+  }
+
+  ENROLLMENTS {
+    int user_id FK
+    int course_id FK
+    datetime enrolled_at
+    string status
+    string role_in_course
+  }
+
+  CONTENT {
+    int id PK
+    int course_id FK
+    int author_id FK
+    string title
+    text body
+    string content_type
+    datetime created_at
+    datetime updated_at
+    bool published
+    int visibility_level
+  }
+
+  CONTENT_VERSIONS {
+    int id PK
+    int content_id FK
+    int author_id FK
+    int version_number
+    text body
+    datetime created_at
+    string changelog
+  }
+
+  ATTACHMENTS {
+    int id PK
+    int content_id FK
+    string filename
+    string mime_type
+    string url
+    int size_bytes
+    datetime uploaded_at
+  }
+
+  TAGS {
+    int id PK
+    string name UNIQUE
+  }
+
+  CONTENT_TAGS {
+    int content_id FK
+    int tag_id FK
+  }
+
+  COMMENTS {
+    int id PK
+    int content_id FK
+    int author_id FK
+    text body
+    datetime created_at
+    datetime edited_at
+    int parent_comment_id FK NULL
+  }
+
+  JOB_POSTS {
+    int id PK
+    int organization_id FK
+    string title
+    text description
+    string location
+    datetime posted_at
+    datetime expires_at
+  }
+
+  APPLICATIONS {
+    int id PK
+    int job_post_id FK
+    int user_id FK
+    string status
+    datetime applied_at
+  }
+
+  USERS ||--o{ ROLE_USERS : has
+  ROLES ||--o{ ROLE_USERS : includes
+
+  ROLES ||--o{ ROLE_PERMISSIONS : has
+  PERMISSIONS ||--o{ ROLE_PERMISSIONS : grants
+
+  ORGANIZATIONS ||--o{ USERS : employs
+  ORGANIZATIONS ||--o{ DEPARTMENTS : owns
+  ORGANIZATIONS ||--o{ JOB_POSTS : posts
+
+  DEPARTMENTS ||--o{ COURSES : contains
+  COURSES ||--o{ CONTENT : contains
+  USERS ||--o{ CONTENT : authors
+  CONTENT ||--o{ CONTENT_VERSIONS : versions
+  CONTENT ||--o{ ATTACHMENTS : has
+  CONTENT ||--o{ COMMENTS : has
+  CONTENT ||--o{ CONTENT_TAGS : tagged
+  TAGS ||--o{ CONTENT_TAGS : referenced
+
+  CURRICULA ||--o{ CURRICULUM_COURSES : groups
+  COURSES ||--o{ CURRICULUM_COURSES : part_of
+
+  USERS ||--o{ ENROLLMENTS : enrolls
+  COURSES ||--o{ ENROLLMENTS : has
+
+  JOB_POSTS ||--o{ APPLICATIONS : receives
+  USERS ||--o{ APPLICATIONS : applies
