@@ -1,0 +1,20 @@
+flowchart LR
+  U["Users\nid\nfull_name\nemail"]
+  R["Roles\nid\nname"]
+  O["Organizations\nid\nname"]
+  D["Departments\nid\nname"]
+  C["Courses\nid\ncode\ntitle"]
+  CU["Curricula\nid\nname"]
+  CT["Content\nid\ntitle\ncontent_type"]
+  JP["JobPosts\nid\ntitle"]
+  A["Applications\nid\nstatus"]
+
+  U -->|has role| R
+  O --> D
+  D --> C
+  C --> CT
+  U -->|authors| CT
+  U -->|enrolls| C
+  CU -->|contains| C
+  JP --> A
+  U -->|applies| A

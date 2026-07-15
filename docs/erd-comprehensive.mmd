@@ -1,0 +1,681 @@
+erDiagram
+    %% ===== SYSTEM & USERS =====
+    ORGANIZATIONS {
+        int id PK
+        string name
+        string slug
+        text description
+        boolean is_active
+    }
+    
+    USER_PREFIXES {
+        int id PK
+        string prefix_name
+        string prefix_abbreviation
+        int display_order
+    }
+    
+    USER_TYPES {
+        int id PK
+        string type_name
+        text description
+    }
+    
+    USERS {
+        int id PK
+        int prefix_id FK
+        string first_name
+        string middle_name
+        string last_name
+        string email UK
+        string phone
+        string username UK
+        string password_hash
+        int organization_id FK
+        boolean is_active
+        boolean is_verified
+        timestamp created_at
+        timestamp last_login
+    }
+    
+    %% ===== RBAC =====
+    PERMISSIONS {
+        int id PK
+        string permission_name UK
+        string module
+        string action
+        text description
+    }
+    
+    ROLES {
+        int id PK
+        string role_name UK
+        text description
+        boolean is_system_role
+    }
+    
+    ROLE_PERMISSIONS {
+        int role_id FK
+        int permission_id FK
+    }
+    
+    USER_ROLES {
+        int user_id FK
+        int role_id FK
+        int assigned_by FK
+        timestamp assigned_at
+    }
+    
+    USER_USER_TYPES {
+        int user_id FK
+        int user_type_id FK
+    }
+    
+    %% ===== AUDIT =====
+    AUDIT_LOGS {
+        int id PK
+        int user_id FK
+        string action
+        string module
+        string entity_type
+        int entity_id
+        jsonb details
+        string ip_address
+        text user_agent
+        string status
+        timestamp created_at
+    }
+    
+    %% ===== FACULTY & ACADEMIC =====
+    FACULTY_TITLES {
+        int id PK
+        string title_name UK
+        int title_level
+        text description
+    }
+    
+    FACULTY {
+        int id PK
+        int user_id FK UK
+        int title_id FK
+        string office_location
+        string office_phone
+        text bio
+        text qualification
+        date hire_date
+        boolean is_active
+    }
+    
+    FACULTY_EXPERTISE {
+        int id PK
+        int faculty_id FK
+        string expertise_area
+        string proficiency_level
+        text description
+    }
+    
+    PUBLICATIONS {
+        int id PK
+        string title
+        int publication_year
+        string publication_venue
+        string volume_issue
+        string pages
+        text url
+        string doi
+        string publication_type
+    }
+    
+    PUBLICATION_AUTHORS {
+        int publication_id FK
+        int faculty_id FK
+        int author_order
+        boolean is_corresponding
+    }
+    
+    %% ===== CURRICULUM & COURSES =====
+    CURRICULA {
+        int id PK
+        string curriculum_name
+        string curriculum_code UK
+        int organization_id FK
+        text description
+        int total_credits
+        int duration_years
+        boolean is_active
+    }
+    
+    CURRICULUM_OBJECTIVES {
+        int id PK
+        int curriculum_id FK
+        text objective_text
+        int objective_order
+    }
+    
+    COURSES {
+        int id PK
+        string course_code UK
+        string course_name
+        int curriculum_id FK
+        text description
+        int credits
+        int lecture_hours
+        int lab_hours
+        int faculty_id FK
+        boolean is_active
+    }
+    
+    COURSE_PREREQUISITES {
+        int course_id FK
+        int prerequisite_course_id FK
+        boolean is_corequisite
+    }
+    
+    COURSE_SEMESTERS {
+        int id PK
+        int course_id FK
+        int semester_number
+        string academic_year
+        boolean is_offered
+    }
+    
+    COURSE_MATERIALS {
+        int id PK
+        int course_id FK
+        string material_type
+        string material_name
+        string file_url
+        string file_path
+        int uploaded_by FK
+        timestamp uploaded_at
+    }
+    
+    %% ===== CONTENT: NEWS, ANNOUNCEMENTS, EVENTS =====
+    POST_CATEGORIES {
+        int id PK
+        string category_name UK
+        string category_slug
+        text description
+    }
+    
+    POSTS {
+        int id PK
+        string title
+        string slug UK
+        int category_id FK
+        int author_id FK
+        text content
+        string featured_image_url
+        string excerpt
+        string status
+        timestamp published_at
+        boolean is_featured
+        int view_count
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    POST_ATTACHMENTS {
+        int id PK
+        int post_id FK
+        string attachment_name
+        string file_url
+        string file_path
+        bigint file_size
+        string mime_type
+    }
+    
+    POST_COMMENTS {
+        int id PK
+        int post_id FK
+        int author_id FK
+        text comment_text
+        int parent_comment_id FK
+        boolean is_approved
+        timestamp created_at
+    }
+    
+    %% ===== EXTERNAL: PROSPECTIVE STUDENTS =====
+    ADMISSION_INFO {
+        int id PK
+        string title
+        text content
+        string info_type
+        date effective_date
+        date expiration_date
+        boolean is_active
+        int updated_by FK
+    }
+    
+    SCHOLARSHIPS {
+        int id PK
+        string scholarship_name
+        text description
+        decimal amount
+        text eligibility_criteria
+        date application_deadline
+        int award_count
+        boolean is_active
+    }
+    
+    CAREER_PATHS {
+        int id PK
+        string job_title
+        text job_description
+        text required_skills
+        decimal salary_range_min
+        decimal salary_range_max
+        text career_growth_opportunities
+        string industries
+    }
+    
+    %% ===== EXTERNAL: COUNSELOR HUB =====
+    COUNSELOR_RESOURCES {
+        int id PK
+        string resource_name
+        string resource_type
+        text description
+        string file_url
+        string file_path
+        bigint file_size
+        int downloads_count
+        boolean is_active
+    }
+    
+    COUNSELOR_COORDINATION_FORMS {
+        int id PK
+        string form_name
+        text form_description
+        string file_url
+        string file_path
+        string version
+        date effective_date
+        boolean is_active
+    }
+    
+    %% ===== EXTERNAL: ACADEMIC PARTNERS =====
+    ACADEMIC_PARTNERS {
+        int id PK
+        string institution_name
+        string country
+        string contact_person
+        string contact_email
+        string collaboration_type
+        date mou_date
+        date mou_expiration_date
+        text description
+        boolean is_active
+    }
+    
+    COLLABORATION_PROPOSALS {
+        int id PK
+        int proposing_partner_id FK
+        string proposal_type
+        string proposal_title
+        text proposal_description
+        string status
+        int submitted_by FK
+        timestamp submitted_date
+        int reviewed_by FK
+        timestamp reviewed_date
+    }
+    
+    %% ===== INTERNAL: STUDENTS =====
+    STUDENT_PROFILES {
+        int id PK
+        int user_id FK UK
+        string student_id UK
+        int curriculum_id FK
+        date enrollment_date
+        date graduation_date
+        string academic_status
+        decimal gpa
+        boolean is_active
+    }
+    
+    STUDENT_PETITIONS {
+        int id PK
+        string petition_name
+        text petition_description
+        string file_url
+        string file_path
+        string version
+        boolean is_active
+    }
+    
+    CWIE_RECORDS {
+        int id PK
+        int student_id FK
+        string employer_name
+        date internship_start_date
+        date internship_end_date
+        string position_title
+        string supervisor_name
+        string supervisor_email
+        int hours_completed
+        int credits_earned
+        string status
+    }
+    
+    %% ===== INTERNAL: DASHBOARDS =====
+    DASHBOARD_STATS {
+        int id PK
+        date stat_date
+        string stat_type
+        string metric_name
+        int metric_value
+    }
+    
+    EXECUTIVE_REPORTS {
+        int id PK
+        string report_title
+        text report_description
+        int generated_by FK
+        timestamp generated_date
+        jsonb report_data
+    }
+    
+    %% ===== JOB BOARD =====
+    JOB_CATEGORIES {
+        int id PK
+        string category_name UK
+        text category_description
+        boolean is_active
+    }
+    
+    JOB_POSTS {
+        int id PK
+        string job_title
+        text job_description
+        int category_id FK
+        int employer_id FK
+        string position_type
+        string location
+        decimal salary_min
+        decimal salary_max
+        string currency
+        int num_positions
+        int experience_required
+        string education_required
+        string status
+        timestamp posted_date
+        date expiration_date
+    }
+    
+    JOB_POST_APPLICATIONS {
+        int id PK
+        int job_post_id FK
+        int applicant_id FK
+        timestamp application_date
+        string status
+        text cover_letter
+        timestamp reviewed_date
+        int reviewed_by FK
+    }
+    
+    MARKET_TRENDS {
+        int id PK
+        date trend_date
+        int job_category_id FK
+        decimal avg_salary
+        int opening_count
+        string popular_skills
+    }
+    
+    SALARY_RANGES {
+        int id PK
+        int job_category_id FK
+        string job_level
+        int experience_years
+        decimal salary_min
+        decimal salary_max
+        string location
+    }
+    
+    %% ===== SKILLS & MATCHING =====
+    SKILLS {
+        int id PK
+        string skill_name UK
+        string skill_category
+        text description
+        boolean is_technical
+    }
+    
+    STUDENT_SKILLS {
+        int id PK
+        int student_id FK
+        int skill_id FK
+        string proficiency_level
+        int years_of_experience
+        boolean certified
+        string certification_url
+    }
+    
+    JOB_POST_SKILLS {
+        int id PK
+        int job_post_id FK
+        int skill_id FK
+        string required_proficiency
+        boolean is_mandatory
+        int weight_score
+    }
+    
+    %% ===== PORTFOLIOS =====
+    PORTFOLIOS {
+        int id PK
+        int student_id FK UK
+        string portfolio_title
+        text portfolio_summary
+        string portfolio_url
+        boolean is_public
+    }
+    
+    PORTFOLIO_PROJECTS {
+        int id PK
+        int portfolio_id FK
+        string project_title
+        text project_description
+        string project_url
+        string github_url
+        string technologies_used
+        string project_image_url
+        date start_date
+        date end_date
+    }
+    
+    %% ===== MATCHING ENGINE =====
+    SKILL_MATCHING_SCORES {
+        int id PK
+        int student_id FK
+        int job_post_id FK
+        decimal match_score
+        int match_percentage
+        int skills_matched
+        int skills_missing
+        timestamp calculated_at
+    }
+    
+    JOB_RECOMMENDATIONS {
+        int id PK
+        int student_id FK
+        int job_post_id FK
+        decimal recommendation_score
+        text reason
+        timestamp recommended_at
+        timestamp viewed_at
+        timestamp applied_at
+    }
+    
+    MATCHING_ALERTS {
+        int id PK
+        int student_id FK
+        string alert_type
+        text alert_message
+        int job_post_id FK
+        boolean is_sent
+        timestamp sent_at
+        boolean is_read
+        timestamp read_at
+    }
+    
+    MATCHING_CONFIG {
+        int id PK
+        string config_key UK
+        string config_value
+        string config_type
+        text description
+        int updated_by FK
+    }
+    
+    %% ===== EMPLOYERS =====
+    EMPLOYERS {
+        int id PK
+        int user_id FK UK
+        string company_name
+        string company_registration_number
+        string company_website
+        string company_size
+        string industry
+        string verification_status
+        boolean is_verified
+    }
+    
+    EMPLOYER_VERIFICATION {
+        int id PK
+        int employer_id FK
+        string verification_type
+        string verification_document_url
+        timestamp verification_date
+        int verified_by FK
+        string verification_status
+    }
+    
+    %% ===== ADMIN: MENU & SETTINGS =====
+    MENU_STRUCTURE {
+        int id PK
+        string menu_name
+        string menu_slug
+        int parent_menu_id FK
+        int menu_order
+        string menu_icon
+        string menu_url
+        boolean is_visible
+        string requires_permission
+    }
+    
+    CONTENT_CATEGORIES {
+        int id PK
+        string category_name UK
+        string category_slug
+        text category_description
+        boolean is_active
+    }
+    
+    SYSTEM_SETTINGS {
+        int id PK
+        string setting_key UK
+        text setting_value
+        string setting_type
+        text description
+        int updated_by FK
+    }
+    
+    %% ===== NOTIFICATIONS =====
+    NOTIFICATIONS {
+        int id PK
+        int recipient_user_id FK
+        string notification_type
+        string notification_title
+        text notification_message
+        string related_entity_type
+        int related_entity_id
+        boolean is_read
+        timestamp read_at
+        timestamp created_at
+    }
+    
+    %% ===== RELATIONSHIPS =====
+    
+    ORGANIZATIONS ||--o{ USERS : contains
+    ORGANIZATIONS ||--o{ CURRICULA : manages
+    
+    USER_PREFIXES ||--o{ USERS : "has"
+    USER_TYPES ||--o{ USER_USER_TYPES : contains
+    USERS ||--o{ USER_USER_TYPES : assigned_to
+    
+    USERS ||--o{ USER_ROLES : assigned
+    ROLES ||--o{ USER_ROLES : assigned_to
+    PERMISSIONS ||--o{ ROLE_PERMISSIONS : contains
+    ROLES ||--o{ ROLE_PERMISSIONS : has_permissions
+    
+    USERS ||--o{ AUDIT_LOGS : performs_action
+    USERS ||--o{ USER_ROLES : assigned_by
+    
+    FACULTY_TITLES ||--o{ FACULTY : categorizes
+    USERS ||--o{ FACULTY : is
+    FACULTY ||--o{ FACULTY_EXPERTISE : has
+    FACULTY ||--o{ PUBLICATIONS : author_of
+    PUBLICATIONS ||--o{ PUBLICATION_AUTHORS : features
+    FACULTY ||--o{ PUBLICATION_AUTHORS : authored
+    
+    CURRICULA ||--o{ CURRICULUM_OBJECTIVES : has
+    CURRICULA ||--o{ COURSES : includes
+    COURSES ||--o{ COURSE_PREREQUISITES : has_prereq
+    COURSES ||--o{ COURSE_SEMESTERS : scheduled_in
+    COURSES ||--o{ COURSE_MATERIALS : has
+    FACULTY ||--o{ COURSES : teaches
+    USERS ||--o{ COURSE_MATERIALS : uploaded_by
+    
+    POST_CATEGORIES ||--o{ POSTS : categorizes
+    USERS ||--o{ POSTS : authored_by
+    POSTS ||--o{ POST_ATTACHMENTS : has_attachments
+    POSTS ||--o{ POST_COMMENTS : receives_comments
+    USERS ||--o{ POST_COMMENTS : authored_by
+    POST_COMMENTS ||--o{ POST_COMMENTS : "replies_to"
+    
+    USERS ||--o{ ADMISSION_INFO : updates
+    USERS ||--o{ EXECUTIVE_REPORTS : generates
+    
+    USERS ||--o{ COLLABORATION_PROPOSALS : submitted_by
+    ACADEMIC_PARTNERS ||--o{ COLLABORATION_PROPOSALS : receives_proposals
+    USERS ||--o{ COLLABORATION_PROPOSALS : reviews
+    
+    USERS ||--o{ STUDENT_PROFILES : is
+    CURRICULA ||--o{ STUDENT_PROFILES : enrolls_in
+    STUDENT_PROFILES ||--o{ STUDENT_PETITIONS : downloads
+    STUDENT_PROFILES ||--o{ CWIE_RECORDS : has
+    
+    JOB_CATEGORIES ||--o{ JOB_POSTS : categorizes
+    USERS ||--o{ JOB_POSTS : posted_by
+    JOB_POSTS ||--o{ JOB_POST_APPLICATIONS : receives
+    STUDENT_PROFILES ||--o{ JOB_POST_APPLICATIONS : applies_to
+    USERS ||--o{ JOB_POST_APPLICATIONS : reviews
+    
+    JOB_CATEGORIES ||--o{ MARKET_TRENDS : tracks
+    JOB_CATEGORIES ||--o{ SALARY_RANGES : provides_salary_data
+    
+    SKILLS ||--o{ STUDENT_SKILLS : assessed_in
+    STUDENT_PROFILES ||--o{ STUDENT_SKILLS : possesses
+    
+    SKILLS ||--o{ JOB_POST_SKILLS : required_by
+    JOB_POSTS ||--o{ JOB_POST_SKILLS : requires
+    
+    STUDENT_PROFILES ||--o{ PORTFOLIOS : has
+    PORTFOLIOS ||--o{ PORTFOLIO_PROJECTS : contains
+    
+    STUDENT_PROFILES ||--o{ SKILL_MATCHING_SCORES : calculated_for
+    JOB_POSTS ||--o{ SKILL_MATCHING_SCORES : scored_against
+    
+    STUDENT_PROFILES ||--o{ JOB_RECOMMENDATIONS : receives
+    JOB_POSTS ||--o{ JOB_RECOMMENDATIONS : recommended_for
+    
+    STUDENT_PROFILES ||--o{ MATCHING_ALERTS : receives_alerts
+    JOB_POSTS ||--o{ MATCHING_ALERTS : triggers_alerts
+    
+    USERS ||--o{ EMPLOYERS : is
+    EMPLOYERS ||--o{ EMPLOYER_VERIFICATION : verified_by
+    USERS ||--o{ EMPLOYER_VERIFICATION : verified_by
+    
+    USERS ||--o{ NOTIFICATIONS : receives
+    USERS ||--o{ SYSTEM_SETTINGS : updates
+    MENU_STRUCTURE ||--o{ MENU_STRUCTURE : "has_submenu"

@@ -1,0 +1,185 @@
+graph TB
+    %% System Foundation
+    ORG["organizations<br/>(id, name, slug)"]
+    UP["user_prefixes<br/>(id, prefix_name)"]
+    UT["user_types<br/>(id, type_name)"]
+    U["users<br/>(id, prefix_id, email, username)"]
+    R["roles<br/>(id, role_name)"]
+    P["permissions<br/>(id, permission_name)"]
+    RP["role_permissions<br/>"]
+    UR["user_roles<br/>"]
+    UUT["user_user_types<br/>"]
+    AL["audit_logs<br/>(id, user_id, action)"]
+    
+    %% Faculty & Academic
+    FT["faculty_titles<br/>(id, title_name)"]
+    FA["faculty<br/>(id, user_id, title_id)"]
+    FE["faculty_expertise<br/>(id, faculty_id)"]
+    PUB["publications<br/>(id, title, year)"]
+    PA["publication_authors<br/>"]
+    
+    %% Curriculum
+    CUR["curricula<br/>(id, name, code)"]
+    CO["curriculum_objectives<br/>"]
+    C["courses<br/>(id, code, name)"]
+    CP["course_prerequisites<br/>"]
+    CS["course_semesters<br/>"]
+    CM["course_materials<br/>"]
+    
+    %% Content
+    PC["post_categories<br/>(id, name)"]
+    PO["posts<br/>(id, title, status)"]
+    PA2["post_attachments<br/>"]
+    PCC["post_comments<br/>"]
+    
+    %% External Portal - Prospective
+    AI["admission_info<br/>"]
+    SCH["scholarships<br/>"]
+    CP2["career_paths<br/>"]
+    
+    %% External Portal - Counselor
+    CR["counselor_resources<br/>"]
+    CCF["counselor_coordination_forms<br/>"]
+    
+    %% External Portal - Partners
+    AP["academic_partners<br/>"]
+    COLP["collaboration_proposals<br/>"]
+    
+    %% Internal Portal - Students
+    SP["student_profiles<br/>(id, user_id, student_id)"]
+    SPT["student_petitions<br/>"]
+    CWIE["cwie_records<br/>(id, student_id)"]
+    
+    %% Internal Portal - Dashboard
+    DS["dashboard_stats<br/>"]
+    ER["executive_reports<br/>"]
+    
+    %% Job Board
+    JC["job_categories<br/>(id, name)"]
+    JP["job_posts<br/>(id, title, salary)"]
+    JPA["job_post_applications<br/>"]
+    MT["market_trends<br/>"]
+    SR["salary_ranges<br/>"]
+    
+    %% Skills & Matching
+    SK["skills<br/>(id, name, category)"]
+    SKSTU["student_skills<br/>(id, student_id, skill_id)"]
+    JPS["job_post_skills<br/>(id, job_post_id, skill_id)"]
+    
+    %% Portfolios
+    PF["portfolios<br/>(id, student_id)"]
+    PFP["portfolio_projects<br/>"]
+    
+    %% Matching Engine
+    SMS["skill_matching_scores<br/>(student_id, job_post_id, score)"]
+    JR["job_recommendations<br/>(student_id, job_post_id)"]
+    MA["matching_alerts<br/>(student_id, alert_type)"]
+    MC["matching_config<br/>(config_key, value)"]
+    
+    %% Employer
+    EM["employers<br/>(id, user_id, company)"]
+    EMV["employer_verification<br/>"]
+    
+    %% Admin
+    MS["menu_structure<br/>"]
+    CC["content_categories<br/>"]
+    SS["system_settings<br/>"]
+    NOT["notifications<br/>"]
+    
+    %% Relationships - Foundation
+    UP -.-> U
+    UT -.-> UUT
+    U -.-> UUT
+    ORG -.-> U
+    U -.-> UR
+    R -.-> UR
+    P -.-> RP
+    R -.-> RP
+    U -.-> AL
+    
+    %% Relationships - Academic
+    FT -.-> FA
+    U -.-> FA
+    FA -.-> FE
+    FA -.-> PA
+    PUB -.-> PA
+    
+    %% Relationships - Curriculum
+    ORG -.-> CUR
+    CUR -.-> CO
+    CUR -.-> C
+    C -.-> CP
+    C -.-> CS
+    C -.-> CM
+    FA -.-> C
+    U -.-> CM
+    
+    %% Relationships - Content
+    PC -.-> PO
+    U -.-> PO
+    PO -.-> PA2
+    PO -.-> PCC
+    U -.-> PCC
+    
+    %% Relationships - External Portal
+    U -.-> AI
+    U -.-> ER
+    U -.-> COLP
+    AP -.-> COLP
+    
+    %% Relationships - Internal Portal
+    U -.-> SP
+    CUR -.-> SP
+    SP -.-> CWIE
+    
+    %% Relationships - Job Board
+    JC -.-> JP
+    U -.-> JP
+    JP -.-> JPA
+    SP -.-> JPA
+    U -.-> JPA
+    JC -.-> MT
+    JC -.-> SR
+    
+    %% Relationships - Skills & Matching
+    SK -.-> SKSTU
+    SP -.-> SKSTU
+    SK -.-> JPS
+    JP -.-> JPS
+    
+    %% Relationships - Portfolios
+    SP -.-> PF
+    PF -.-> PFP
+    
+    %% Relationships - Matching Engine
+    SP -.-> SMS
+    JP -.-> SMS
+    SP -.-> JR
+    JP -.-> JR
+    SP -.-> MA
+    JP -.-> MA
+    U -.-> MC
+    
+    %% Relationships - Employer
+    U -.-> EM
+    EM -.-> EMV
+    U -.-> EMV
+    
+    %% Relationships - Admin
+    U -.-> SS
+    U -.-> NOT
+    
+    %% Styling
+    classDef system fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef academic fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef portal fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    classDef jobboard fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef matching fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef admin fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    
+    class ORG,UP,UT,U,R,P,RP,UR,UUT,AL system
+    class FT,FA,FE,PUB,PA,CUR,CO,C,CP,CS,CM,PC,PO,PA2,PCC academic
+    class AI,SCH,CP2,CR,CCF,AP,COLP,SP,SPT,CWIE,DS,ER portal
+    class JC,JP,JPA,MT,SR jobboard
+    class SK,SKSTU,JPS,PF,PFP,SMS,JR,MA,MC,EM,EMV matching
+    class MS,CC,SS,NOT admin
