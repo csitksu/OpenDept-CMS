@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&amp;family=Sarabun:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:'Sarabun',sans-serif;}
+  a{color:#1b52a4;text-decoration:none;}
+  a:hover{color:#0f3d7a;}
+  ::selection{background:#cfe0f7;}
+  .msym{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;white-space:nowrap;-webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased;}
+  .qcard:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(27,82,164,.16);}
+  .qcard{transition:transform .18s ease,box-shadow .18s ease;}
+  .ncard:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(15,61,122,.16);}
+  .ncard{transition:transform .18s ease,box-shadow .18s ease;}
+  .navlink:hover{color:var(--primary,#1b52a4);}
+  .navlink::after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:2px;background:var(--primary,#1b52a4);transform:scaleX(0);transform-origin:left;transition:transform .2s ease;}
+  .navlink:hover::after{transform:scaleX(1);}
+  .relcard:hover{transform:translateY(-4px);}
+  .relcard{transition:transform .18s ease;}
+  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  @media(max-width:960px){
+    #topbar-links{display:none !important;}
+    #topbar-ham{display:inline-flex !important;}
+    #hero-grid{grid-template-columns:1fr !important;}
+    #announce-grid{grid-template-columns:1fr !important;}
+    #hero-photo-wrap{display:none !important;}
+  }
+  @media(min-width:961px){ #mobile-menu{display:none !important;} }
+</style>
+</helmet>
+
+<div style="background:#f4f8fd;color:#14233b;min-height:100vh;--primary:{{ primaryColor }};--primary-dark:{{ primaryDark }};--cta:{{ ctaColor }};">
+
+  <!-- ===== TOP HEADER ===== -->
+  <header style="position:sticky;top:0;z-index:60;background:#ffffff;box-shadow:0 2px 14px rgba(15,61,122,.08);">
+    <div style="max-width:1200px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px;">
+      <a href="#home" style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+        <img src="uploads/CSIT_Logo_trimmed.png" alt="CSIT Kalasin University" style="height:46px;width:auto;display:block;">
+        <div style="line-height:1.2;border-left:1px solid #e2e9f2;padding-left:12px;">
+          <div style="font-family: 'Prompt',sans-serif; font-weight: 600; font-size: 13px; color: #0f3d7a">สาขาวิทยาการคอมพิวเตอร์และเทคโนโลยีสารสนเทศ</div>
+          <div style="font-size:11px;color:#5b6b82;">คณะวิทยาศาสตร์และเทคโนโลยีสุขภาพ · มหาวิทยาลัยกาฬสินธุ์</div>
+        </div>
+      </a>
+
+      <nav id="topbar-links" style="display:flex;align-items:center;gap:26px;margin-left:auto;">
+        <sc-for list="{{ navItems }}" as="nav" hint-placeholder-count="7">
+          <a href="{{ nav.href }}" class="navlink" style="{{ nav.style }}">{{ nav.label }}</a>
+        </sc-for>
+      </nav>
+
+      <a href="#programs" style="margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:var(--cta,#e23b3b);color:#fff;font-family:'Prompt',sans-serif;font-weight:600;font-size:15px;padding:11px 20px;border-radius:999px;box-shadow:0 8px 18px rgba(226,59,59,.32);flex-shrink:0;">
+        <span class="msym" style="font-size:19px;">edit_note</span>สมัครออนไลน์
+      </a>
+
+      <button id="topbar-ham" onClick="{{ toggleMenu }}" style="display:none;margin-left:6px;width:44px;height:44px;border:none;border-radius:12px;background:#eef4fc;color:var(--primary,#1b52a4);align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+        <span class="msym" style="font-size:26px;">{{ menuIcon }}</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== MOBILE MENU ===== -->
+  <div id="mobile-menu" style="{{ menuStyle }}">
+    <div style="background:#fff;box-shadow:0 12px 30px rgba(15,61,122,.14);padding:10px 16px 18px;">
+      <sc-for list="{{ navItems }}" as="nav" hint-placeholder-count="7">
+        <a href="{{ nav.href }}" onClick="{{ closeMenu }}" style="display:flex;align-items:center;justify-content:space-between;padding:13px 6px;border-bottom:1px solid #eef2f8;font-family:'Prompt',sans-serif;font-weight:500;color:#26364d;">
+          {{ nav.label }}<span class="msym" style="font-size:18px;color:#9fb2cc;">chevron_right</span>
+        </a>
+      </sc-for>
+      <a href="#programs" onClick="{{ closeMenu }}" style="margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--cta,#e23b3b);color:#fff;font-family:'Prompt',sans-serif;font-weight:600;padding:13px;border-radius:12px;">
+        <span class="msym" style="font-size:19px;">edit_note</span>สมัครออนไลน์
+      </a>
+    </div>
+  </div>
+
+  <div id="top"></div>
+
+  <!-- ================= HOME PAGE ================= -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div>
+  <!-- ===== HERO BANNER ===== -->
+  <section style="max-width:1200px;margin:0 auto;padding:22px 20px 0;">
+    <div style="position:relative;overflow:hidden;border-radius:22px;background:linear-gradient(120deg,var(--primary-dark,#0f3d7a) 0%,var(--primary,#1b52a4) 45%,#2e79d6 100%);padding:clamp(24px,4vw,46px);color:#fff;box-shadow:0 20px 46px rgba(15,61,122,.28);">
+      <div style="position:absolute;top:-70px;right:-40px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.08);"></div>
+      <div style="position:absolute;bottom:-90px;left:30%;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.06);"></div>
+      <div id="hero-grid" style="position:relative;display:grid;grid-template-columns:1.35fr 1fr;gap:30px;align-items:center;">
+        <div>
+          <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);padding:7px 15px;border-radius:999px;font-weight:600;font-size:14px;">
+            <span class="msym" style="font-size:18px;">campaign</span>เปิดรับสมัครนักศึกษาใหม่
+          </span>
+          <h1 style="font-family:'Prompt',sans-serif;font-weight:800;font-size:clamp(30px,5vw,52px);line-height:1.1;margin:16px 0 4px;">ปีการศึกษา {{ academicYear }}</h1>
+          <div style="font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(18px,2.6vw,26px);color:#ffd873;line-height:1.25;">วิทยาการคอมพิวเตอร์ &amp; เทคโนโลยีสารสนเทศ</div>
+          <p style="font-size:clamp(14px,1.6vw,17px);color:#dce9fb;max-width:520px;margin:14px 0 22px;">คณะวิทยาศาสตร์และเทคโนโลยีสุขภาพ มหาวิทยาลัยกาฬสินธุ์ — เรียนรู้จากการลงมือทำจริง พร้อมก้าวสู่สายงานเทคโนโลยีแห่งอนาคต</p>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;">
+            <a href="#programs" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--primary,#1b52a4);font-family:'Prompt',sans-serif;font-weight:600;font-size:15px;padding:12px 22px;border-radius:999px;"><span class="msym" style="font-size:19px;">menu_book</span>ดูหลักสูตร</a>
+            <a href="#home" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:#fff;font-family:'Prompt',sans-serif;font-weight:600;font-size:15px;padding:12px 22px;border-radius:999px;"><span class="msym" style="font-size:19px;">event</span>ปฏิทินรับสมัคร</a>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;">
+            <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:10px;font-size:13.5px;"><span class="msym" style="font-size:17px;color:#ffd873;">school</span>ระดับปริญญาตรี</span>
+            <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:10px;font-size:13.5px;"><span class="msym" style="font-size:17px;color:#ffd873;">language</span>admission.ksu.ac.th</span>
+          </div>
+        </div>
+        <div id="hero-photo-wrap" style="position:relative;height:320px;animation:floaty 6s ease-in-out infinite;">
+          <div style="position:absolute;inset:0;border-radius:18px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.25);border:5px solid rgba(255,255,255,.55);">
+            <sc-for list="{{ heroSlides }}" as="s" hint-placeholder-count="3">
+              <div style="{{ s.style }}">
+                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ s.id }}" shape="rect" fit="cover" placeholder="{{ s.placeholder }}" hint-size="100%,100%"></x-import>
+              </div>
+            </sc-for>
+            <div style="position:absolute;bottom:12px;left:0;right:0;z-index:5;display:flex;justify-content:center;gap:8px;pointer-events:none;">
+              <sc-for list="{{ heroSlides }}" as="s" hint-placeholder-count="3">
+                <span style="{{ s.dotStyle }}"></span>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== INTRO + ADMISSION CALENDAR ===== -->
+  <section id="admission" style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,60px) 20px 0;">
+    <div style="display:flex;flex-wrap:wrap;gap:34px;align-items:flex-start;">
+      <div style="flex:1.2 1 340px;min-width:300px;">
+        <span style="display:inline-flex;align-items:center;gap:8px;color:var(--cta,#e23b3b);font-weight:600;font-size:14px;"><span class="msym" style="font-size:18px;">campaign</span>เปิดรับสมัครนักศึกษาใหม่</span>
+        <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(26px,3.6vw,38px);line-height:1.2;margin:12px 0 6px;color:#12233d;">เปิดรับ <span style="color:var(--cta,#e23b3b);">นักศึกษาใหม่</span> ปีการศึกษา {{ academicYear }}</h2>
+        <div style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(20px,2.8vw,30px);color:var(--primary,#1b52a4);margin-bottom:10px;">สาขาวิทยาการคอมพิวเตอร์และเทคโนโลยีสารสนเทศ</div>
+        <p style="font-size:16px;color:#4b5b72;line-height:1.7;max-width:560px;">มุ่งผลิตบัณฑิตนักปฏิบัติด้านคอมพิวเตอร์และไอที ทันสมัย ตอบโจทย์ตลาดแรงงานดิจิทัล ภายใต้แนวคิด <b>“เรียนรู้จากของจริง ทำได้จริง”</b></p>
+        <a href="#programs" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;margin-top:22px;width:100%;max-width:560px;background:linear-gradient(135deg,var(--primary,#1b52a4),#2e79d6);color:#fff;font-family:'Prompt',sans-serif;font-weight:600;font-size:16px;padding:15px;border-radius:14px;box-shadow:0 10px 24px rgba(27,82,164,.28);"><span class="msym" style="font-size:20px;">search</span>ค้นหาหลักสูตรที่เปิดสอน</a>
+        <div style="display:flex;flex-wrap:wrap;gap:26px;margin-top:26px;">
+          <sc-for list="{{ stats }}" as="st" hint-placeholder-count="3">
+            <div>
+              <div style="font-family:'Prompt',sans-serif;font-weight:800;font-size:32px;color:#f5a623;line-height:1;">{{ st.n }}</div>
+              <div style="font-size:13.5px;color:#5b6b82;margin-top:4px;">{{ st.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ showCalendar }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1 1 340px;min-width:300px;background:#fff;border-radius:20px;padding:24px;box-shadow:0 16px 40px rgba(15,61,122,.1);border:1px solid #e7eefb;">
+          <div style="display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid #eef2f8;margin-bottom:8px;">
+            <div style="width:44px;height:44px;border-radius:12px;background:#eef4fc;color:var(--primary,#1b52a4);display:flex;align-items:center;justify-content:center;"><span class="msym" style="font-size:24px;">event_available</span></div>
+            <div>
+              <div style="font-family:'Prompt',sans-serif;font-weight:700;font-size:18px;color:#12233d;">ปฏิทินรับสมัคร</div>
+              <div style="font-size:13px;color:#7688a0;">รอบที่ 1 · ประจำปีการศึกษา {{ academicYear }}</div>
+            </div>
+          </div>
+          <sc-for list="{{ calendar }}" as="c" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f2f5fa;">
+              <span style="width:24px;height:24px;flex-shrink:0;border-radius:50%;background:#eef4fc;color:var(--primary,#1b52a4);font-family:'Prompt',sans-serif;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;">{{ c.n }}</span>
+              <span style="flex:1;font-size:14.5px;color:#33445c;">{{ c.label }}</span>
+              <span style="flex-shrink:0;font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:999px;background:{{ c.chipBg }};color:{{ c.chipFg }};">{{ c.date }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <!-- ===== QUICK LINKS ===== -->
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) 20px 0;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;">
+      <sc-for list="{{ quicklinks }}" as="q" hint-placeholder-count="6">
+        <a href="{{ q.href }}" class="qcard" style="background:#fff;border:1px solid #e7eefb;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px;box-shadow:0 6px 18px rgba(15,61,122,.06);">
+          <div style="width:48px;height:48px;border-radius:13px;background:linear-gradient(140deg,#eef4fc,#dbe9fb);color:var(--primary,#1b52a4);display:flex;align-items:center;justify-content:center;"><span class="msym" style="font-size:26px;">{{ q.icon }}</span></div>
+          <div style="font-family:'Prompt',sans-serif;font-weight:600;font-size:15.5px;color:#12233d;margin-top:4px;">{{ q.label }}</div>
+          <div style="font-size:12.5px;color:#7688a0;line-height:1.4;">{{ q.desc }}</div>
+          <span class="msym" style="font-size:20px;color:var(--primary,#1b52a4);margin-top:auto;align-self:flex-end;">arrow_circle_right</span>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ===== ANNOUNCEMENTS ===== -->
+  <section id="news" style="max-width:1200px;margin:0 auto;padding:clamp(38px,5vw,64px) 20px 0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;">
+      <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(22px,3vw,30px);color:#12233d;margin:0;border-left:5px solid var(--cta,#e23b3b);padding-left:14px;">ประกาศ ปีการศึกษา {{ academicYear }}</h2>
+      <a href="#news" style="display:inline-flex;align-items:center;gap:6px;font-family:'Prompt',sans-serif;font-weight:500;font-size:14px;color:var(--primary,#1b52a4);border:1px solid #cfe0f7;padding:8px 16px;border-radius:999px;flex-shrink:0;">ดูทั้งหมด<span class="msym" style="font-size:18px;">arrow_forward</span></a>
+    </div>
+    <div id="announce-grid" style="display:grid;grid-template-columns:1.5fr 1fr;gap:24px;">
+      <div class="ncard" style="background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(15,61,122,.08);border:1px solid #e7eefb;">
+        <div style="position:relative;height:clamp(210px,28vw,320px);background:linear-gradient(120deg,var(--primary-dark,#0f3d7a),#2e79d6);">
+          <sc-for list="{{ featSlides }}" as="s" hint-placeholder-count="3">
+            <div style="{{ s.style }}">
+              <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ s.id }}" shape="rect" fit="cover" placeholder="{{ s.placeholder }}" hint-size="100%,100%"></x-import>
+            </div>
+          </sc-for>
+          <span style="position:absolute;top:14px;left:14px;z-index:5;background:var(--cta,#e23b3b);color:#fff;font-family:'Prompt',sans-serif;font-weight:600;font-size:12.5px;padding:6px 13px;border-radius:8px;">{{ feat.tag }}</span>
+          <div style="position:absolute;bottom:12px;right:14px;z-index:5;display:flex;gap:7px;pointer-events:none;">
+            <sc-for list="{{ featSlides }}" as="s" hint-placeholder-count="3">
+              <span style="{{ s.dotStyle }}"></span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding:22px 24px 26px;">
+          <div style="display:flex;align-items:center;gap:14px;color:#7688a0;font-size:13px;margin-bottom:10px;">
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span class="msym" style="font-size:16px;">calendar_today</span>{{ feat.date }}</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span class="msym" style="font-size:16px;">person</span>{{ feat.author }}</span>
+          </div>
+          <h3 style="font-family:'Prompt',sans-serif;font-weight:600;font-size:21px;color:#12233d;line-height:1.35;margin:0 0 10px;min-height:57px;">{{ feat.title }}</h3>
+          <p style="font-size:15px;color:#5b6b82;line-height:1.65;margin:0 0 14px;min-height:72px;">{{ feat.excerpt }}</p>
+          <a href="#news" style="display:inline-flex;align-items:center;gap:7px;font-family:'Prompt',sans-serif;font-weight:600;color:var(--cta,#e23b3b);">อ่านต่อ<span class="msym" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <sc-for list="{{ announceList }}" as="a" hint-placeholder-count="3">
+          <a href="#news" class="ncard" style="display:flex;gap:14px;background:#fff;border-radius:14px;padding:14px;box-shadow:0 6px 18px rgba(15,61,122,.06);border:1px solid #e7eefb;">
+            <div style="width:78px;height:78px;flex-shrink:0;border-radius:11px;background:linear-gradient(140deg,#dbe9fb,#c3d9f6);color:var(--primary,#1b52a4);display:flex;align-items:center;justify-content:center;"><span class="msym" style="font-size:30px;">{{ a.icon }}</span></div>
+            <div style="min-width:0;">
+              <span style="font-size:11.5px;font-weight:600;color:var(--primary,#1b52a4);background:#eef4fc;padding:3px 9px;border-radius:6px;">{{ a.tag }}</span>
+              <div style="font-family:'Prompt',sans-serif;font-weight:500;font-size:14.5px;color:#26364d;line-height:1.4;margin:7px 0 6px;">{{ a.title }}</div>
+              <div style="font-size:12px;color:#8496ad;display:flex;align-items:center;gap:5px;"><span class="msym" style="font-size:14px;">schedule</span>{{ a.date }}</div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NEWS & ACTIVITIES ===== -->
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(38px,5vw,64px) 20px 0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;">
+      <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(22px,3vw,30px);color:#12233d;margin:0;border-left:5px solid var(--primary,#1b52a4);padding-left:14px;">ข่าวสารและกิจกรรม</h2>
+      <a href="#news" style="display:inline-flex;align-items:center;gap:6px;font-family:'Prompt',sans-serif;font-weight:500;font-size:14px;color:var(--primary,#1b52a4);border:1px solid #cfe0f7;padding:8px 16px;border-radius:999px;flex-shrink:0;">ดูทั้งหมด<span class="msym" style="font-size:18px;">arrow_forward</span></a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;">
+      <sc-for list="{{ news }}" as="n" hint-placeholder-count="3">
+        <a href="#news" class="ncard" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(15,61,122,.07);border:1px solid #e7eefb;display:flex;flex-direction:column;">
+          <div style="position:relative;height:180px;background:linear-gradient(120deg,var(--primary,#1b52a4),#2e79d6);">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ n.id }}" shape="rect" fit="cover" placeholder="วางรูปกิจกรรม" hint-size="100%,100%"></x-import>
+            <span style="position:absolute;top:12px;left:12px;background:rgba(15,61,122,.86);color:#fff;font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:7px;">ข่าว &amp; กิจกรรม</span>
+          </div>
+          <div style="padding:18px 18px 20px;display:flex;flex-direction:column;flex:1;">
+            <div style="display:flex;align-items:center;gap:12px;color:#8496ad;font-size:12.5px;margin-bottom:9px;">
+              <span style="display:inline-flex;align-items:center;gap:5px;"><span class="msym" style="font-size:15px;">calendar_today</span>{{ n.date }}</span>
+              <span style="display:inline-flex;align-items:center;gap:5px;"><span class="msym" style="font-size:15px;">person</span>{{ n.author }}</span>
+            </div>
+            <h3 style="font-family:'Prompt',sans-serif;font-weight:600;font-size:17px;color:#12233d;line-height:1.4;margin:0 0 8px;">{{ n.title }}</h3>
+            <p style="font-size:14px;color:#5b6b82;line-height:1.6;margin:0 0 14px;">{{ n.excerpt }}</p>
+            <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-family:'Prompt',sans-serif;font-weight:600;font-size:14px;color:var(--primary,#1b52a4);">อ่านเพิ่มเติม<span class="msym" style="font-size:17px;">arrow_forward</span></span>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ===== RELATED UNITS ===== -->
+  <section id="related" style="max-width:1200px;margin:0 auto;padding:clamp(38px,5vw,64px) 20px 0;">
+    <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(22px,3vw,30px);color:#12233d;margin:0 0 22px;border-left:5px solid #f5a623;padding-left:14px;">หน่วยงานที่เกี่ยวข้อง</h2>
+    <div ref="{{ setRelRef }}" style="display:flex;gap:18px;overflow-x:hidden;padding:4px 2px 8px;">
+      <sc-for list="{{ relatedLoop }}" as="r" hint-placeholder-count="5">
+        <a href="{{ r.href }}" class="relcard" style="flex:0 0 clamp(240px,80%,300px);position:relative;overflow:hidden;border-radius:16px;padding:22px;min-height:130px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;background:linear-gradient(135deg,{{ r.tint }},{{ r.tint2 }});box-shadow:0 10px 26px rgba(15,61,122,.12);">
+          <span class="msym" style="position:absolute;top:16px;right:16px;font-size:40px;opacity:.28;">{{ r.icon }}</span>
+          <div style="font-family:'Prompt',sans-serif;font-weight:700;font-size:16.5px;line-height:1.35;">{{ r.name }}</div>
+          <div style="font-size:12.5px;opacity:.85;margin-top:4px;">{{ r.en }}</div>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  </div>
+  </sc-if>
+
+  <!-- ================= ABOUT PAGE ================= -->
+  <sc-if value="{{ isAbout }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <section style="background:linear-gradient(120deg,var(--primary-dark,#0f3d7a),var(--primary,#1b52a4));color:#fff;padding:clamp(30px,5vw,54px) 20px;">
+      <div style="max-width:1200px;margin:0 auto;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13.5px;opacity:.9;margin-bottom:12px;"><a href="#home" style="color:#dce9fb;">หน้าหลัก</a><span class="msym" style="font-size:16px;">chevron_right</span><span>{{ pageTitle }}</span></div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:56px;height:56px;border-radius:15px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span class="msym" style="font-size:30px;color:#ffd873;">{{ pageIcon }}</span></div>
+          <div><h1 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(26px,4vw,40px);margin:0;">{{ pageTitle }}</h1><p style="margin:6px 0 0;font-size:clamp(14px,1.6vw,16px);color:#dce9fb;">{{ pageDesc }}</p></div>
+        </div>
+      </div>
+    </section>
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(32px,5vw,56px) 20px;">
+      <div style="background:#fff;border-radius:20px;padding:clamp(24px,4vw,40px);box-shadow:0 12px 34px rgba(15,61,122,.08);border:1px solid #e7eefb;">
+        <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(20px,2.6vw,26px);color:#12233d;margin:0 0 14px;border-left:5px solid var(--primary,#1b52a4);padding-left:14px;">ประวัติความเป็นมา</h2>
+        <p style="font-size:16px;color:#4b5b72;line-height:1.85;margin:0;">สาขาวิชาวิทยาการคอมพิวเตอร์และเทคโนโลยีสารสนเทศ สังกัดคณะวิทยาศาสตร์และเทคโนโลยีสุขภาพ มหาวิทยาลัยกาฬสินธุ์ จัดตั้งขึ้นเพื่อผลิตบัณฑิตนักปฏิบัติที่มีความเชี่ยวชาญด้านคอมพิวเตอร์และเทคโนโลยีสารสนเทศ ตอบสนองความต้องการกำลังคนดิจิทัลของประเทศและการพัฒนาท้องถิ่น สาขาเปิดสอนตั้งแต่ระดับปริญญาตรีจนถึงระดับปริญญาเอก โดยมุ่งเน้นการเรียนรู้จากการลงมือปฏิบัติจริง ควบคู่กับการวิจัยและสร้างนวัตกรรม</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:22px;">
+        <div style="background:#fff;border-radius:18px;padding:26px;box-shadow:0 8px 24px rgba(15,61,122,.07);border:1px solid #e7eefb;">
+          <div style="width:48px;height:48px;border-radius:13px;background:#eef4fc;color:var(--primary,#1b52a4);display:flex;align-items:center;justify-content:center;margin-bottom:12px;"><span class="msym" style="font-size:26px;">auto_awesome</span></div>
+          <h3 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:19px;color:#12233d;margin:0 0 8px;">ปรัชญา</h3>
+          <p style="font-size:15px;color:#5b6b82;line-height:1.7;margin:0;">สร้างบัณฑิตที่เชี่ยวชาญเทคโนโลยี มีคุณธรรม และพร้อมพัฒนาท้องถิ่นสู่สังคมดิจิทัลอย่างยั่งยืน</p>
+        </div>
+        <div style="background:#fff;border-radius:18px;padding:26px;box-shadow:0 8px 24px rgba(15,61,122,.07);border:1px solid #e7eefb;">
+          <div style="width:48px;height:48px;border-radius:13px;background:#e6f5ee;color:#0f7a5a;display:flex;align-items:center;justify-content:center;margin-bottom:12px;"><span class="msym" style="font-size:26px;">visibility</span></div>
+          <h3 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:19px;color:#12233d;margin:0 0 8px;">วิสัยทัศน์</h3>
+          <p style="font-size:15px;color:#5b6b82;line-height:1.7;margin:0;">เป็นสาขาชั้นนำด้านวิทยาการคอมพิวเตอร์และเทคโนโลยีสารสนเทศเพื่อการพัฒนาท้องถิ่นและสุขภาพ</p>
+        </div>
+        <div style="background:#fff;border-radius:18px;padding:26px;box-shadow:0 8px 24px rgba(15,61,122,.07);border:1px solid #e7eefb;">
+          <div style="width:48px;height:48px;border-radius:13px;background:#f2ecfa;color:#6a3fb0;display:flex;align-items:center;justify-content:center;margin-bottom:12px;"><span class="msym" style="font-size:26px;">flag</span></div>
+          <h3 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:19px;color:#12233d;margin:0 0 8px;">พันธกิจ</h3>
+          <ul style="font-size:14.5px;color:#5b6b82;line-height:1.7;margin:0;padding-left:18px;"><li>จัดการเรียนการสอนที่เน้นการปฏิบัติจริง</li><li>สร้างงานวิจัยและนวัตกรรม</li><li>บริการวิชาการแก่ชุมชน</li><li>ทำนุบำรุงศิลปวัฒนธรรม</li></ul>
+        </div>
+      </div>
+      <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(20px,2.6vw,26px);color:#12233d;margin:40px 0 18px;border-left:5px solid #f5a623;padding-left:14px;">จุดเด่นของสาขา</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+        <div style="background:#fff;border-radius:16px;padding:22px;box-shadow:0 6px 18px rgba(15,61,122,.06);border:1px solid #e7eefb;"><span class="msym" style="font-size:30px;color:var(--primary,#1b52a4);">precision_manufacturing</span><div style="font-family:'Prompt',sans-serif;font-weight:600;font-size:16px;color:#12233d;margin:10px 0 4px;">เรียนจากของจริง</div><p style="font-size:13.5px;color:#7688a0;margin:0;line-height:1.6;">ห้องปฏิบัติการทันสมัยและโครงงานจริงทุกชั้นปี</p></div>
+        <div style="background:#fff;border-radius:16px;padding:22px;box-shadow:0 6px 18px rgba(15,61,122,.06);border:1px solid #e7eefb;"><span class="msym" style="font-size:30px;color:var(--primary,#1b52a4);">handshake</span><div style="font-family:'Prompt',sans-serif;font-weight:600;font-size:16px;color:#12233d;margin:10px 0 4px;">เครือข่ายพันธมิตร</div><p style="font-size:13.5px;color:#7688a0;margin:0;line-height:1.6;">ฝึกงานและสหกิจกับองค์กรด้านเทคโนโลยีและสุขภาพ</p></div>
+        <div style="background:#fff;border-radius:16px;padding:22px;box-shadow:0 6px 18px rgba(15,61,122,.06);border:1px solid #e7eefb;"><span class="msym" style="font-size:30px;color:var(--primary,#1b52a4);">school</span><div style="font-family:'Prompt',sans-serif;font-weight:600;font-size:16px;color:#12233d;margin:10px 0 4px;">เรียนต่อได้ถึง ป.เอก</div><p style="font-size:13.5px;color:#7688a0;margin:0;line-height:1.6;">เปิดสอนครบตั้งแต่ปริญญาตรีถึงปริญญาเอก</p></div>
+        <div style="background:#fff;border-radius:16px;padding:22px;box-shadow:0 6px 18px rgba(15,61,122,.06);border:1px solid #e7eefb;"><span class="msym" style="font-size:30px;color:var(--primary,#1b52a4);">work</span><div style="font-family:'Prompt',sans-serif;font-weight:600;font-size:16px;color:#12233d;margin:10px 0 4px;">พร้อมสู่ตลาดงาน</div><p style="font-size:13.5px;color:#7688a0;margin:0;line-height:1.6;">ทักษะตรงกับความต้องการของอุตสาหกรรมดิจิทัล</p></div>
+      </div>
+      <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(20px,2.6vw,26px);color:#12233d;margin:40px 0 18px;border-left:5px solid var(--cta,#e23b3b);padding-left:14px;">อาชีพหลังสำเร็จการศึกษา</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        <span style="background:#fff;border:1px solid #e7eefb;border-radius:999px;padding:10px 18px;font-size:14px;color:#33445c;box-shadow:0 4px 12px rgba(15,61,122,.05);">นักพัฒนาซอฟต์แวร์</span>
+        <span style="background:#fff;border:1px solid #e7eefb;border-radius:999px;padding:10px 18px;font-size:14px;color:#33445c;box-shadow:0 4px 12px rgba(15,61,122,.05);">นักวิเคราะห์ข้อมูล</span>
+        <span style="background:#fff;border:1px solid #e7eefb;border-radius:999px;padding:10px 18px;font-size:14px;color:#33445c;box-shadow:0 4px 12px rgba(15,61,122,.05);">นักวิชาการคอมพิวเตอร์</span>
+        <span style="background:#fff;border:1px solid #e7eefb;border-radius:999px;padding:10px 18px;font-size:14px;color:#33445c;box-shadow:0 4px 12px rgba(15,61,122,.05);">ผู้ดูแลระบบสารสนเทศโรงพยาบาล</span>
+        <span style="background:#fff;border:1px solid #e7eefb;border-radius:999px;padding:10px 18px;font-size:14px;color:#33445c;box-shadow:0 4px 12px rgba(15,61,122,.05);">นักวิทยาการข้อมูลสุขภาพ</span>
+        <span style="background:#fff;border:1px solid #e7eefb;border-radius:999px;padding:10px 18px;font-size:14px;color:#33445c;box-shadow:0 4px 12px rgba(15,61,122,.05);">ผู้ประกอบการดิจิทัล</span>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- ================= PROGRAMS PAGE ================= -->
+  <sc-if value="{{ isPrograms }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <section style="background:linear-gradient(120deg,var(--primary-dark,#0f3d7a),var(--primary,#1b52a4));color:#fff;padding:clamp(30px,5vw,54px) 20px;">
+      <div style="max-width:1200px;margin:0 auto;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13.5px;opacity:.9;margin-bottom:12px;"><a href="#home" style="color:#dce9fb;">หน้าหลัก</a><span class="msym" style="font-size:16px;">chevron_right</span><span>{{ pageTitle }}</span></div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:56px;height:56px;border-radius:15px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span class="msym" style="font-size:30px;color:#ffd873;">{{ pageIcon }}</span></div>
+          <div><h1 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(26px,4vw,40px);margin:0;">{{ pageTitle }}</h1><p style="margin:6px 0 0;font-size:clamp(14px,1.6vw,16px);color:#dce9fb;">{{ pageDesc }}</p></div>
+        </div>
+      </div>
+    </section>
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(32px,5vw,56px) 20px;display:flex;flex-direction:column;gap:26px;">
+      <sc-for list="{{ programs }}" as="p" hint-placeholder-count="3">
+        <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 12px 34px rgba(15,61,122,.08);border:1px solid #e7eefb;display:flex;flex-wrap:wrap;">
+          <div style="flex:0 0 clamp(220px,26%,300px);background:linear-gradient(150deg,{{ p.color }},{{ p.color2 }});color:#fff;padding:clamp(24px,3vw,34px);display:flex;flex-direction:column;justify-content:space-between;min-height:220px;">
+            <div>
+              <span style="display:inline-block;background:rgba(255,255,255,.2);border-radius:999px;padding:6px 15px;font-family:'Prompt',sans-serif;font-weight:600;font-size:13.5px;">{{ p.level }}</span>
+              <div style="font-family:'Prompt',sans-serif;font-weight:800;font-size:44px;margin-top:18px;line-height:1;">{{ p.code }}</div>
+            </div>
+            <span class="msym" style="font-size:56px;opacity:.35;align-self:flex-end;">{{ p.icon }}</span>
+          </div>
+          <div style="flex:1 1 340px;padding:clamp(24px,3vw,34px);">
+            <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(20px,2.4vw,25px);color:#12233d;margin:0 0 3px;">{{ p.name }}</h2>
+            <div style="font-size:14px;color:#8496ad;margin-bottom:14px;">{{ p.en }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+              <span style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:#33445c;background:#f4f8fd;border:1px solid #e7eefb;padding:7px 13px;border-radius:10px;"><span class="msym" style="font-size:16px;color:var(--primary,#1b52a4);">schedule</span>{{ p.years }}</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:#33445c;background:#f4f8fd;border:1px solid #e7eefb;padding:7px 13px;border-radius:10px;"><span class="msym" style="font-size:16px;color:var(--primary,#1b52a4);">school</span>{{ p.credits }}</span>
+            </div>
+            <p style="font-size:15px;color:#5b6b82;line-height:1.75;margin:0 0 16px;">{{ p.desc }}</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px 18px;margin-bottom:20px;">
+              <sc-for list="{{ p.highlights }}" as="h" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:#33445c;"><span class="msym" style="font-size:18px;color:#1c7a45;">check_circle</span>{{ h }}</div>
+              </sc-for>
+            </div>
+            <a href="#contact" style="display:inline-flex;align-items:center;gap:8px;background:var(--cta,#e23b3b);color:#fff;font-family:'Prompt',sans-serif;font-weight:600;font-size:14.5px;padding:11px 22px;border-radius:999px;box-shadow:0 8px 18px rgba(226,59,59,.28);"><span class="msym" style="font-size:18px;">edit_note</span>สมัครเรียน / สอบถาม</a>
+          </div>
+        </div>
+      </sc-for>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- ================= PEOPLE PAGE ================= -->
+  <sc-if value="{{ isPeople }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <section style="background:linear-gradient(120deg,var(--primary-dark,#0f3d7a),var(--primary,#1b52a4));color:#fff;padding:clamp(30px,5vw,54px) 20px;">
+      <div style="max-width:1200px;margin:0 auto;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13.5px;opacity:.9;margin-bottom:12px;"><a href="#home" style="color:#dce9fb;">หน้าหลัก</a><span class="msym" style="font-size:16px;">chevron_right</span><span>{{ pageTitle }}</span></div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:56px;height:56px;border-radius:15px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span class="msym" style="font-size:30px;color:#ffd873;">{{ pageIcon }}</span></div>
+          <div><h1 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(26px,4vw,40px);margin:0;">{{ pageTitle }}</h1><p style="margin:6px 0 0;font-size:clamp(14px,1.6vw,16px);color:#dce9fb;">{{ pageDesc }}</p></div>
+        </div>
+      </div>
+    </section>
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(32px,5vw,56px) 20px;">
+      <div style="display:flex;align-items:center;gap:10px;background:#eef4fc;border:1px solid #d6e6fa;border-radius:12px;padding:12px 16px;margin-bottom:26px;color:#33445c;font-size:13.5px;"><span class="msym" style="font-size:20px;color:var(--primary,#1b52a4);">info</span>คลิกที่ชื่อเพื่อแก้ไขเป็นชื่อ–นามสกุลจริง และลากรูปถ่ายมาวางในกรอบภาพได้เลย</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px;">
+        <sc-for list="{{ people }}" as="r" hint-placeholder-count="10">
+          <div style="{{ r.cardStyle }}">
+            <div style="{{ r.ringStyle }}">
+              <div style="width:100%;height:100%;border-radius:50%;overflow:hidden;background:#fff;">
+                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ r.id }}" shape="circle" fit="cover" placeholder="รูปถ่าย" hint-size="100%,100%"></x-import>
+              </div>
+            </div>
+            <div style="font-family:'Prompt',sans-serif;font-weight:600;font-size:17px;color:#12233d;">{{ r.name }}</div>
+            <div style="{{ r.roleStyle }}">{{ r.role }}</div>
+            <div style="font-size:13px;color:#7688a0;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px;"><span class="msym" style="font-size:16px;color:var(--primary,#1b52a4);">psychology</span>{{ r.field }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- ================= NEWS PAGE ================= -->
+  <sc-if value="{{ isNews }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <section style="background:linear-gradient(120deg,var(--primary-dark,#0f3d7a),var(--primary,#1b52a4));color:#fff;padding:clamp(30px,5vw,54px) 20px;">
+      <div style="max-width:1200px;margin:0 auto;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13.5px;opacity:.9;margin-bottom:12px;"><a href="#home" style="color:#dce9fb;">หน้าหลัก</a><span class="msym" style="font-size:16px;">chevron_right</span><span>{{ pageTitle }}</span></div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:56px;height:56px;border-radius:15px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span class="msym" style="font-size:30px;color:#ffd873;">{{ pageIcon }}</span></div>
+          <div><h1 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(26px,4vw,40px);margin:0;">{{ pageTitle }}</h1><p style="margin:6px 0 0;font-size:clamp(14px,1.6vw,16px);color:#dce9fb;">{{ pageDesc }}</p></div>
+        </div>
+      </div>
+    </section>
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(32px,5vw,56px) 20px;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;">
+        <sc-for list="{{ newsAll }}" as="n" hint-placeholder-count="6">
+          <a href="#news" class="ncard" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(15,61,122,.07);border:1px solid #e7eefb;display:flex;flex-direction:column;">
+            <div style="position:relative;height:180px;background:linear-gradient(120deg,var(--primary,#1b52a4),#2e79d6);">
+              <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ n.id }}" shape="rect" fit="cover" placeholder="วางรูปข่าว" hint-size="100%,100%"></x-import>
+              <span style="position:absolute;top:12px;left:12px;background:rgba(15,61,122,.86);color:#fff;font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:7px;">{{ n.cat }}</span>
+            </div>
+            <div style="padding:18px 18px 20px;display:flex;flex-direction:column;flex:1;">
+              <div style="display:flex;align-items:center;gap:12px;color:#8496ad;font-size:12.5px;margin-bottom:9px;">
+                <span style="display:inline-flex;align-items:center;gap:5px;"><span class="msym" style="font-size:15px;">calendar_today</span>{{ n.date }}</span>
+                <span style="display:inline-flex;align-items:center;gap:5px;"><span class="msym" style="font-size:15px;">person</span>{{ n.author }}</span>
+              </div>
+              <h3 style="font-family:'Prompt',sans-serif;font-weight:600;font-size:17px;color:#12233d;line-height:1.4;margin:0 0 8px;">{{ n.title }}</h3>
+              <p style="font-size:14px;color:#5b6b82;line-height:1.6;margin:0 0 14px;">{{ n.excerpt }}</p>
+              <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-family:'Prompt',sans-serif;font-weight:600;font-size:14px;color:var(--primary,#1b52a4);">อ่านเพิ่มเติม<span class="msym" style="font-size:17px;">arrow_forward</span></span>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- ================= RESEARCH PAGE ================= -->
+  <sc-if value="{{ isResearch }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <section style="background:linear-gradient(120deg,var(--primary-dark,#0f3d7a),var(--primary,#1b52a4));color:#fff;padding:clamp(30px,5vw,54px) 20px;">
+      <div style="max-width:1200px;margin:0 auto;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13.5px;opacity:.9;margin-bottom:12px;"><a href="#home" style="color:#dce9fb;">หน้าหลัก</a><span class="msym" style="font-size:16px;">chevron_right</span><span>{{ pageTitle }}</span></div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:56px;height:56px;border-radius:15px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span class="msym" style="font-size:30px;color:#ffd873;">{{ pageIcon }}</span></div>
+          <div><h1 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(26px,4vw,40px);margin:0;">{{ pageTitle }}</h1><p style="margin:6px 0 0;font-size:clamp(14px,1.6vw,16px);color:#dce9fb;">{{ pageDesc }}</p></div>
+        </div>
+      </div>
+    </section>
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(32px,5vw,56px) 20px;">
+      <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(20px,2.6vw,26px);color:#12233d;margin:0 0 18px;border-left:5px solid var(--primary,#1b52a4);padding-left:14px;">กลุ่มงานวิจัยที่เชี่ยวชาญ</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;">
+        <sc-for list="{{ researchAreas }}" as="r" hint-placeholder-count="6">
+          <div style="position:relative;overflow:hidden;border-radius:16px;padding:24px;min-height:150px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;background:linear-gradient(135deg,{{ r.tint }},{{ r.tint2 }});box-shadow:0 10px 26px rgba(15,61,122,.12);">
+            <span class="msym" style="position:absolute;top:18px;left:20px;font-size:38px;opacity:.9;color:#fff;">{{ r.icon }}</span>
+            <div style="font-family:'Prompt',sans-serif;font-weight:700;font-size:17px;line-height:1.35;">{{ r.name }}</div>
+            <div style="font-size:12.5px;opacity:.85;margin-top:4px;">{{ r.en }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(20px,2.6vw,26px);color:#12233d;margin:42px 0 18px;border-left:5px solid #f5a623;padding-left:14px;">ผลงานวิจัยและการตีพิมพ์ล่าสุด</h2>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <sc-for list="{{ publications }}" as="pub" hint-placeholder-count="4">
+          <div style="display:flex;gap:16px;background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 6px 18px rgba(15,61,122,.06);border:1px solid #e7eefb;align-items:flex-start;">
+            <div style="flex-shrink:0;width:56px;height:56px;border-radius:12px;background:linear-gradient(140deg,var(--primary,#1b52a4),#2e79d6);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Prompt',sans-serif;line-height:1;"><span style="font-size:11px;opacity:.85;">ปี</span><span style="font-weight:700;font-size:17px;margin-top:3px;">{{ pub.year }}</span></div>
+            <div style="min-width:0;">
+              <div style="font-family:'Prompt',sans-serif;font-weight:600;font-size:15.5px;color:#12233d;line-height:1.5;">{{ pub.title }}</div>
+              <div style="font-size:13px;color:#8496ad;margin-top:5px;display:flex;align-items:center;gap:6px;"><span class="msym" style="font-size:15px;">menu_book</span>{{ pub.venue }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- ================= CONTACT PAGE ================= -->
+  <sc-if value="{{ isContact }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <section style="background:linear-gradient(120deg,var(--primary-dark,#0f3d7a),var(--primary,#1b52a4));color:#fff;padding:clamp(30px,5vw,54px) 20px;">
+      <div style="max-width:1200px;margin:0 auto;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13.5px;opacity:.9;margin-bottom:12px;"><a href="#home" style="color:#dce9fb;">หน้าหลัก</a><span class="msym" style="font-size:16px;">chevron_right</span><span>{{ pageTitle }}</span></div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:56px;height:56px;border-radius:15px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span class="msym" style="font-size:30px;color:#ffd873;">{{ pageIcon }}</span></div>
+          <div><h1 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:clamp(26px,4vw,40px);margin:0;">{{ pageTitle }}</h1><p style="margin:6px 0 0;font-size:clamp(14px,1.6vw,16px);color:#dce9fb;">{{ pageDesc }}</p></div>
+        </div>
+      </div>
+    </section>
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(32px,5vw,56px) 20px;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
+        <div style="background:#fff;border-radius:18px;padding:28px;box-shadow:0 10px 30px rgba(15,61,122,.08);border:1px solid #e7eefb;">
+          <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:20px;color:#12233d;margin:0 0 18px;">ข้อมูลการติดต่อ</h2>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;gap:14px;"><div style="width:44px;height:44px;flex-shrink:0;border-radius:12px;background:#eef4fc;color:var(--primary,#1b52a4);display:flex;align-items:center;justify-content:center;"><span class="msym" style="font-size:22px;">location_on</span></div><div><div style="font-weight:600;color:#12233d;font-size:15px;">ที่อยู่</div><div style="font-size:14px;color:#5b6b82;line-height:1.6;">สาขาวิชาวิทยาการคอมพิวเตอร์และเทคโนโลยีสารสนเทศ คณะวิทยาศาสตร์และเทคโนโลยีสุขภาพ มหาวิทยาลัยกาฬสินธุ์ 13 หมู่ 14 ต.สงเปลือย อ.นามน จ.กาฬสินธุ์ 46230</div></div></div>
+            <div style="display:flex;gap:14px;"><div style="width:44px;height:44px;flex-shrink:0;border-radius:12px;background:#eef4fc;color:var(--primary,#1b52a4);display:flex;align-items:center;justify-content:center;"><span class="msym" style="font-size:22px;">call</span></div><div><div style="font-weight:600;color:#12233d;font-size:15px;">โทรศัพท์ / โทรสาร</div><div style="font-size:14px;color:#5b6b82;line-height:1.6;">โทร. 043-602058 · โทรสาร 043-602057</div></div></div>
+            <div style="display:flex;gap:14px;"><div style="width:44px;height:44px;flex-shrink:0;border-radius:12px;background:#eef4fc;color:var(--primary,#1b52a4);display:flex;align-items:center;justify-content:center;"><span class="msym" style="font-size:22px;">mail</span></div><div><div style="font-weight:600;color:#12233d;font-size:15px;">อีเมล</div><div style="font-size:14px;color:#5b6b82;line-height:1.6;">csit@ksu.ac.th</div></div></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:22px;">
+            <a href="https://www.facebook.com/shtksu" target="_blank" rel="noopener" style="width:44px;height:44px;border-radius:11px;background:#eef4fc;color:var(--primary,#1b52a4);display:flex;align-items:center;justify-content:center;"><span class="msym" style="font-size:22px;">public</span></a>
+            <a href="https://csit.ksu.ac.th" target="_blank" rel="noopener" style="width:44px;height:44px;border-radius:11px;background:#eef4fc;color:var(--primary,#1b52a4);display:flex;align-items:center;justify-content:center;"><span class="msym" style="font-size:22px;">language</span></a>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:18px;padding:28px;box-shadow:0 10px 30px rgba(15,61,122,.08);border:1px solid #e7eefb;">
+          <h2 style="font-family:'Prompt',sans-serif;font-weight:700;font-size:20px;color:#12233d;margin:0 0 18px;">ส่งข้อความถึงเรา</h2>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <input type="text" placeholder="ชื่อ–นามสกุล" style="font-family:'Sarabun',sans-serif;font-size:14.5px;padding:12px 14px;border:1px solid #dbe6f4;border-radius:11px;outline:none;color:#12233d;">
+            <input type="email" placeholder="อีเมล" style="font-family:'Sarabun',sans-serif;font-size:14.5px;padding:12px 14px;border:1px solid #dbe6f4;border-radius:11px;outline:none;color:#12233d;">
+            <input type="text" placeholder="หัวข้อ" style="font-family:'Sarabun',sans-serif;font-size:14.5px;padding:12px 14px;border:1px solid #dbe6f4;border-radius:11px;outline:none;color:#12233d;">
+            <textarea rows="4" placeholder="ข้อความ" style="font-family:'Sarabun',sans-serif;font-size:14.5px;padding:12px 14px;border:1px solid #dbe6f4;border-radius:11px;outline:none;color:#12233d;resize:vertical;"></textarea>
+            <button style="display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--cta,#e23b3b);color:#fff;font-family:'Prompt',sans-serif;font-weight:600;font-size:15px;padding:13px;border:none;border-radius:12px;cursor:pointer;box-shadow:0 8px 18px rgba(226,59,59,.28);"><span class="msym" style="font-size:19px;">send</span>ส่งข้อความ</button>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:24px;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(15,61,122,.08);border:1px solid #e7eefb;background:#fff;">
+        <iframe title="แผนที่คณะวิทยาศาสตร์และเทคโนโลยีสุขภาพ" src="https://www.google.com/maps?q=16.6339736,103.7706632&amp;z=16&amp;hl=th&amp;output=embed" width="100%" height="420" style="border:0;display:block;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="margin-top:clamp(48px,6vw,80px);background:linear-gradient(120deg,var(--primary-dark,#0f3d7a),#123f7d);color:#dce7f6;">
+    <div style="max-width:1200px;margin:0 auto;padding:clamp(36px,5vw,56px) 20px 30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:34px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <div style="background:#fff;border-radius:12px;padding:10px 14px;display:inline-flex;"><img src="uploads/CSIT_Logo_trimmed.png" alt="CSIT Kalasin University" style="height:42px;width:auto;display:block;"></div>
+        </div>
+        <p style="font-size:13.5px;line-height:1.7;opacity:.85;margin:0;">คณะวิทยาศาสตร์และเทคโนโลยีสุขภาพ<br>มหาวิทยาลัยกาฬสินธุ์ (Kalasin University)</p>
+      </div>
+      <div>
+        <div style="font-family:'Prompt',sans-serif;font-weight:600;color:#fff;margin-bottom:14px;">เมนูลัด</div>
+        <sc-for list="{{ navItems }}" as="nav" hint-placeholder-count="7">
+          <a href="{{ nav.href }}" style="display:block;color:#cdddf2;font-size:14px;padding:6px 0;">{{ nav.label }}</a>
+        </sc-for>
+      </div>
+      <div>
+        <div style="font-family:'Prompt',sans-serif;font-weight:600;color:#fff;margin-bottom:14px;">ติดต่อสาขา</div>
+        <div style="display:flex;flex-direction:column;gap:11px;font-size:14px;">
+          <div style="display:flex;gap:10px;"><span class="msym" style="font-size:19px;color:#ffd873;">location_on</span><span style="opacity: .9; font-size: 12px">สาขาวิชาวิทยาการคอมพิวเตอร์และเทคโนโลยีสุขภาพ<br>คณะวิทยาศาสตร์และเทคโนโลยีสุขภาพ <br>มหาวิทยาลัยกาฬสินธุ์ <br>13 หมู่ 14 ต.สงเปลือย อ.นามน จ.กาฬสินธุ์ 46230</span></div>
+          <div style="display:flex;gap:10px;align-items:center;"><span class="msym" style="font-size:19px;color:#ffd873;">call</span><span style="opacity: .9; font-size: 12px">0-4381-1128 ต่อ 4110, 5120</span></div>
+          <div style="display:flex;gap:10px;align-items:center;"><span class="msym" style="font-size:19px;color:#ffd873;">mail</span><span style="opacity:.9;">csit@ksu.ac.th</span></div>
+          <div style="display:flex;gap:10px;align-items:center;"><span class="msym" style="font-size:19px;color:#ffd873;"><a href="https://csit.ksu.ac.th" style="color: #ffd873">language</a></span><span style="opacity:.9;"><a href="https://csit.ksu.ac.th" style="color: #ffffff">csit.ksu.ac.th</a></span></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Prompt',sans-serif;font-weight:600;color:#fff;margin-bottom:14px;">ช่องทางติดตาม</div>
+        <div style="display:flex;gap:10px;">
+          <a href="#" style="width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:#fff;"><span class="msym" style="font-size:22px;">public</span></a>
+          <a href="#" style="width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:#fff;"><span class="msym" style="font-size:22px;">forum</span></a>
+          <a href="#" style="width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:#fff;"><span class="msym" style="font-size:22px;">smart_display</span></a>
+        </div>
+        <a href="#admission" style="display:inline-flex;align-items:center;gap:8px;margin-top:20px;background:var(--cta,#e23b3b);color:#fff;font-family:'Prompt',sans-serif;font-weight:600;font-size:14px;padding:11px 18px;border-radius:999px;"><span class="msym" style="font-size:18px;">edit_note</span>สมัครออนไลน์</a>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.12);">
+      <div style="max-width:1200px;margin:0 auto;padding:18px 20px;font-size:13px;opacity:.8;text-align:center;">© 2568 สาขาวิทยาการคอมพิวเตอร์และเทคโนโลยีสารสนเทศ · มหาวิทยาลัยกาฬสินธุ์</div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;academicYear&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2570&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;เนื้อหา&quot;},&quot;showCalendar&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;เนื้อหา&quot;},&quot;primaryColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#1b52a4&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;สีธีม&quot;,&quot;options&quot;:[&quot;#1b52a4&quot;,&quot;#0f7a5a&quot;,&quot;#6a3fb0&quot;,&quot;#12233d&quot;]},&quot;ctaColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#e23b3b&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;สีธีม&quot;,&quot;options&quot;:[&quot;#e23b3b&quot;,&quot;#e67e22&quot;,&quot;#c0392b&quot;,&quot;#1b52a4&quot;]}}">
+class Component extends DCLogic {
+  state = { menuOpen: false, heroIdx: 0, featIdx: 0, page: 'home' };
+
+  componentDidMount() {
+    this._r = () => this.forceUpdate();
+    window.addEventListener('resize', this._r);
+    this._hero = setInterval(() => this.setState(s => ({ heroIdx: (s.heroIdx + 1) % 3 })), 5000);
+    this._feat = setInterval(() => this.setState(s => ({ featIdx: (s.featIdx + 1) % 3 })), 10000);
+    this._rel = setInterval(() => this._advanceRel(), 3000);
+    this._known = ['home','about','programs','people','news','research','contact'];
+    this._hash = () => {
+      const h = (location.hash || '').replace('#', '');
+      const page = this._known.includes(h) ? h : 'home';
+      this.setState({ page, menuOpen: false });
+      try { window.scrollTo(0, 0); } catch (e) {}
+    };
+    window.addEventListener('hashchange', this._hash);
+    this._hash();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._r);
+    window.removeEventListener('hashchange', this._hash);
+    clearInterval(this._hero);
+    clearInterval(this._feat);
+    clearInterval(this._rel);
+  }
+  _advanceRel() {
+    const el = this.relRef;
+    if (!el || !el.children.length) return;
+    const step = el.children[0].getBoundingClientRect().width + 18;
+    el.scrollTo({ left: el.scrollLeft + step, behavior: 'smooth' });
+    setTimeout(() => {
+      if (el.scrollLeft >= el.scrollWidth / 2 - 2) {
+        el.scrollTo({ left: el.scrollLeft - el.scrollWidth / 2, behavior: 'auto' });
+      }
+    }, 700);
+  }
+
+  renderVals() {
+    const primary = this.props.primaryColor ?? '#1b52a4';
+    const cta = this.props.ctaColor ?? '#e23b3b';
+    const darken = (hex) => {
+      const h = hex.replace('#', '');
+      const r = Math.max(0, Math.round(parseInt(h.slice(0,2),16) * 0.62));
+      const g = Math.max(0, Math.round(parseInt(h.slice(2,4),16) * 0.62));
+      const b = Math.max(0, Math.round(parseInt(h.slice(4,6),16) * 0.62));
+      return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+    };
+    const menuOpen = this.state.menuOpen;
+    const heroIdx = this.state.heroIdx;
+    const featIdx = this.state.featIdx;
+
+    const chip = {
+      amber: { chipBg:'#fff3d6', chipFg:'#a86a00' },
+      blue:  { chipBg:'#e5eefb', chipFg:'#1b52a4' },
+      green: { chipBg:'#dff3e6', chipFg:'#1c7a45' },
+    };
+
+    const slideStyle = (i, active) => `position:absolute;inset:0;opacity:${i === active ? 1 : 0};z-index:${i === active ? 2 : 1};transition:opacity .8s ease;`;
+    const dotStyle = (i, active) => `width:9px;height:9px;border-radius:50%;background:${i === active ? '#fff' : 'rgba(255,255,255,.45)'};box-shadow:0 1px 3px rgba(0,0,0,.25);transition:background .3s ease;`;
+
+    const heroSlides = [
+      { id:'hero-photo',   placeholder:'วางรูปนักศึกษา / กิจกรรม (สไลด์ 1)' },
+      { id:'hero-photo-2', placeholder:'วางรูปสไลด์ 2' },
+      { id:'hero-photo-3', placeholder:'วางรูปสไลด์ 3' },
+    ].map((s, i) => ({ ...s, style: slideStyle(i, heroIdx), dotStyle: dotStyle(i, heroIdx) }));
+
+    const featured = [
+      { id:'feat-1', tag:'ประกาศ ปีการศึกษา ' + (this.props.academicYear ?? '2570'), date:'1 ก.ค. 2569', author:'งานประชาสัมพันธ์สาขา', title:'รับสมัครรอบที่ 1 Portfolio (โครงการพิเศษ) ระดับปริญญาตรี', excerpt:'เปิดรับสมัครนักศึกษาใหม่ผ่านระบบออนไลน์ ตั้งแต่วันที่ 1 กรกฎาคม ถึง 3 สิงหาคม 2569 โดยพิจารณาจากแฟ้มสะสมผลงานและการสอบสัมภาษณ์' },
+      { id:'feat-2', tag:'ทุนการศึกษา', date:'20 มิ.ย. 2569', author:'งานกิจการนักศึกษา', title:'เปิดรับสมัครทุนเรียนดี สำหรับนักศึกษาใหม่ ปีการศึกษา 2570', excerpt:'มอบทุนสนับสนุนการศึกษาแก่ผู้มีผลการเรียนดีเด่น พร้อมโอกาสฝึกงานร่วมกับหน่วยงานพันธมิตรด้านเทคโนโลยีชั้นนำ' },
+      { id:'feat-3', tag:'รับสมัคร', date:'12 มิ.ย. 2569', author:'งานวิชาการ', title:'รอบ 2 โควตา รับตรง สำหรับนักเรียนในเขตภาคอีสาน', excerpt:'สาขาเปิดรับนักเรียนในเขตพื้นที่ภาคตะวันออกเฉียงเหนือ ผ่านระบบโควตาพิเศษ สมัครได้ตั้งแต่บัดนี้เป็นต้นไป' },
+    ];
+    const featSlides = featured.map((s, i) => ({ id: s.id, placeholder: 'วางโปสเตอร์ประกาศ (' + (i + 1) + ')', style: slideStyle(i, featIdx), dotStyle: dotStyle(i, featIdx) }));
+    const feat = featured[featIdx] || featured[0];
+
+    const setRelRef = (el) => { this.relRef = el; };
+
+    const page = this.state.page || 'home';
+    const isHome = page === 'home', isAbout = page === 'about', isPrograms = page === 'programs',
+          isPeople = page === 'people', isNews = page === 'news', isResearch = page === 'research',
+          isContact = page === 'contact';
+
+    const navDefs = [
+      ['หน้าหลัก','home'], ['เกี่ยวกับสาขา','about'], ['หลักสูตร','programs'],
+      ['บุคลากร','people'], ['ข่าว & กิจกรรม','news'], ['งานวิจัย','research'], ['ติดต่อเรา','contact'],
+    ];
+    const navItems = navDefs.map(([label, route]) => ({
+      label, href: '#' + route, active: page === route,
+      style: "position:relative;font-family:'Prompt',sans-serif;font-weight:" + (page === route ? 600 : 500) + ";font-size:15px;color:" + (page === route ? 'var(--primary,#1b52a4)' : '#26364d') + ";",
+    }));
+
+    const pageMeta = {
+      about:    { label: 'เกี่ยวกับสาขา', icon: 'info', desc: 'ประวัติความเป็นมา ปรัชญา วิสัยทัศน์ และพันธกิจของสาขา' },
+      programs: { label: 'หลักสูตรที่เปิดสอน', icon: 'menu_book', desc: 'ระดับปริญญาตรี ปริญญาโท และปริญญาเอก' },
+      people:   { label: 'บุคลากร', icon: 'groups', desc: 'คณาจารย์และบุคลากรประจำสาขา' },
+      news:     { label: 'ข่าวสารและกิจกรรม', icon: 'campaign', desc: 'ข่าวประชาสัมพันธ์ กิจกรรม และประกาศของสาขา' },
+      research: { label: 'งานวิจัย', icon: 'science', desc: 'กลุ่มวิจัย ผลงานตีพิมพ์ และนวัตกรรม' },
+      contact:  { label: 'ติดต่อเรา', icon: 'call', desc: 'ช่องทางติดต่อและแผนที่การเดินทาง' },
+    };
+    const pm = pageMeta[page] || pageMeta.about;
+
+    const programs = [
+      { level:'ปริญญาตรี', code:'วท.บ.', color:'#1b52a4', color2:'#2e79d6', icon:'health_and_safety',
+        name:'เทคโนโลยีสารสนเทศทางการแพทย์', en:'B.Sc. in Medical Information Technology', years:'4 ปี',
+        credits:'ไม่น้อยกว่า 122 หน่วยกิต',
+        desc:'บูรณาการเทคโนโลยีสารสนเทศเข้ากับงานด้านสุขภาพและการแพทย์ ผลิตบัณฑิตนักปฏิบัติที่พัฒนาระบบสารสนเทศโรงพยาบาล วิเคราะห์ข้อมูลสุขภาพ และดูแลระบบดิจิทัลทางการแพทย์',
+        highlights:['ระบบสารสนเทศโรงพยาบาล (HIS)','การวิเคราะห์ข้อมูลสุขภาพ (Health Data)','พัฒนาแอปพลิเคชันทางการแพทย์','ฝึกงานในสถานพยาบาลจริง'] },
+      { level:'ปริญญาโท', code:'วท.ม.', color:'#0f7a5a', color2:'#1aa574', icon:'lightbulb',
+        name:'การจัดการนวัตกรรมเทคโนโลยีสารสนเทศ', en:'M.Sc. in IT Innovation Management', years:'2 ปี',
+        credits:'ไม่น้อยกว่า 36 หน่วยกิต',
+        desc:'พัฒนานักบริหารและนักวิจัยที่สามารถจัดการนวัตกรรมและเทคโนโลยีสารสนเทศในองค์กร ขับเคลื่อนการเปลี่ยนผ่านสู่ดิจิทัลอย่างเป็นระบบ',
+        highlights:['การจัดการนวัตกรรมดิจิทัล','การวิจัยด้านเทคโนโลยีสารสนเทศ','เลือกได้ทั้งแผน ก และ แผน ข','เรียนนอกเวลาราชการได้'] },
+      { level:'ปริญญาเอก', code:'ปร.ด.', color:'#6a3fb0', color2:'#8a5fd0', icon:'workspace_premium',
+        name:'การจัดการนวัตกรรมเทคโนโลยีสารสนเทศ', en:'Ph.D. in IT Innovation Management', years:'3 ปี',
+        credits:'ไม่น้อยกว่า 48 หน่วยกิต',
+        desc:'สร้างนักวิจัยและผู้เชี่ยวชาญระดับสูงที่สามารถสร้างองค์ความรู้และนวัตกรรมด้านการจัดการเทคโนโลยีสารสนเทศ พร้อมตีพิมพ์ในระดับนานาชาติ',
+        highlights:['งานวิจัยเชิงลึกระดับสูง','ตีพิมพ์ในวารสารระดับนานาชาติ','เลือกได้ทั้งแบบ 1 และ แบบ 2','อาจารย์ที่ปรึกษาเชี่ยวชาญเฉพาะทาง'] },
+    ];
+
+    const people = [
+      { id:'p1', name:'อ. ____________', role:'หัวหน้าสาขาวิชา', field:'วิศวกรรมซอฟต์แวร์', email:'—', tint:'#1b52a4', tint2:'#2e79d6', lead:true },
+      { id:'p2', name:'อ. ____________', role:'อาจารย์ประจำ', field:'ปัญญาประดิษฐ์ (AI)', email:'—', tint:'#0f7a5a', tint2:'#1aa574' },
+      { id:'p3', name:'อ. ____________', role:'อาจารย์ประจำ', field:'วิทยาการข้อมูล (Data Science)', email:'—', tint:'#6a3fb0', tint2:'#8a5fd0' },
+      { id:'p4', name:'อ. ____________', role:'อาจารย์ประจำ', field:'ระบบเครือข่ายและความมั่นคง', email:'—', tint:'#c0392b', tint2:'#e05a4b' },
+      { id:'p5', name:'อ. ____________', role:'อาจารย์ประจำ', field:'ระบบฐานข้อมูล', email:'—', tint:'#2c6e9b', tint2:'#4a95c4' },
+      { id:'p6', name:'อ. ____________', role:'อาจารย์ประจำ', field:'เทคโนโลยีสารสนเทศทางการแพทย์', email:'—', tint:'#1b52a4', tint2:'#2e79d6' },
+      { id:'p7', name:'อ. ____________', role:'อาจารย์ประจำ', field:'การพัฒนาเว็บและโมบายแอป', email:'—', tint:'#0f7a5a', tint2:'#1aa574' },
+      { id:'p8', name:'อ. ____________', role:'อาจารย์ประจำ', field:'ระบบสารสนเทศเพื่อการจัดการ', email:'—', tint:'#6a3fb0', tint2:'#8a5fd0' },
+      { id:'p9', name:'อ. ____________', role:'อาจารย์ประจำ', field:'คอมพิวเตอร์กราฟิกส์และมัลติมีเดีย', email:'—', tint:'#c0392b', tint2:'#e05a4b' },
+      { id:'p10', name:'อ. ____________', role:'อาจารย์ประจำ', field:'IoT และระบบสมองกลฝังตัว', email:'—', tint:'#2c6e9b', tint2:'#4a95c4' },
+    ];
+    people.forEach(p => {
+      p.roleStyle = 'display:inline-block;font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;margin-top:8px;' + (p.lead ? 'background:var(--cta,#e23b3b);color:#fff;' : 'background:#eef4fc;color:var(--primary,#1b52a4);');
+      p.cardStyle = 'background:#fff;border-radius:18px;padding:24px 20px;text-align:center;box-shadow:0 8px 24px rgba(15,61,122,.07);border:1px solid ' + (p.lead ? 'rgba(226,59,59,.35)' : '#e7eefb') + ';';
+      p.ringStyle = 'width:104px;height:104px;border-radius:50%;margin:0 auto 14px;padding:4px;background:linear-gradient(140deg,' + p.tint + ',' + p.tint2 + ');';
+    });
+
+    const newsAll = [
+      { id:'na-1', cat:'ข่าว', date:'10 ก.ค. 69', author:'งานประชาสัมพันธ์', title:'นักศึกษาสาขาคว้ารางวัลแข่งขันพัฒนาโปรแกรมระดับภูมิภาค', excerpt:'ทีมนักศึกษาชั้นปีที่ 3 คว้ารางวัลรองชนะเลิศจากเวทีแข่งขันพัฒนาซอฟต์แวร์ระดับภาคอีสาน' },
+      { id:'na-2', cat:'กิจกรรม', date:'9 ก.ค. 69', author:'งานวิชาการ', title:'อบรมเชิงปฏิบัติการ AI & Data Science สำหรับนักศึกษา', excerpt:'สาขาจัดอบรมเสริมทักษะปัญญาประดิษฐ์และการวิเคราะห์ข้อมูลให้นักศึกษาทุกชั้นปี' },
+      { id:'na-3', cat:'กิจกรรม', date:'29 มิ.ย. 69', author:'งานกิจการนักศึกษา', title:'โครงการสัมมนา “เส้นทางอาชีพสายไอที” รุ่นพี่พบรุ่นน้อง', excerpt:'ศิษย์เก่าร่วมแบ่งปันประสบการณ์การทำงานจริงในสายเทคโนโลยีให้กับรุ่นน้อง' },
+      { id:'na-4', cat:'ประกาศ', date:'24 มิ.ย. 69', author:'งานประชาสัมพันธ์', title:'เปิดรับสมัครนักศึกษาใหม่ รอบ 1 Portfolio ปีการศึกษา 2570', excerpt:'รับสมัครผ่านระบบออนไลน์ ตั้งแต่ 1 ก.ค. ถึง 3 ส.ค. 2569 พิจารณาจากแฟ้มสะสมผลงาน' },
+      { id:'na-5', cat:'ข่าว', date:'18 มิ.ย. 69', author:'งานวิจัย', title:'คณาจารย์สาขาตีพิมพ์บทความวิจัยในวารสารระดับนานาชาติ', excerpt:'ผลงานวิจัยด้าน Health Informatics ได้รับการตอบรับตีพิมพ์ในฐานข้อมูล Scopus' },
+      { id:'na-6', cat:'กิจกรรม', date:'5 มิ.ย. 69', author:'งานบริการวิชาการ', title:'ค่ายเยาวชนโค้ดดิ้งเพื่อชุมชน (Coding for Community)', excerpt:'สาขาลงพื้นที่จัดค่ายส่งเสริมทักษะการเขียนโปรแกรมให้เยาวชนในจังหวัดกาฬสินธุ์' },
+    ];
+
+    const researchAreas = [
+      { icon:'smart_toy', name:'ปัญญาประดิษฐ์และการเรียนรู้ของเครื่อง', en:'AI & Machine Learning', tint:'#1b52a4', tint2:'#2e79d6' },
+      { icon:'health_and_safety', name:'สารสนเทศสุขภาพและการแพทย์', en:'Health & Medical Informatics', tint:'#0f7a5a', tint2:'#1aa574' },
+      { icon:'analytics', name:'วิทยาการข้อมูลและการวิเคราะห์', en:'Data Science & Analytics', tint:'#6a3fb0', tint2:'#8a5fd0' },
+      { icon:'sensors', name:'IoT และระบบสมองกลฝังตัว', en:'IoT & Embedded Systems', tint:'#c0392b', tint2:'#e05a4b' },
+      { icon:'developer_board', name:'วิศวกรรมซอฟต์แวร์และระบบสารสนเทศ', en:'Software Engineering', tint:'#2c6e9b', tint2:'#4a95c4' },
+      { icon:'hub', name:'เครือข่ายและความมั่นคงปลอดภัยไซเบอร์', en:'Networks & Cybersecurity', tint:'#b8860b', tint2:'#d4a72c' },
+    ];
+
+    const publications = [
+      { year:'2568', title:'การพัฒนาระบบสนับสนุนการตัดสินใจทางการแพทย์ด้วยการเรียนรู้เชิงลึก', venue:'วารสารวิชาการระดับนานาชาติ (Scopus Q2)' },
+      { year:'2568', title:'แบบจำลองการวิเคราะห์ข้อมูลสุขภาพชุมชนด้วยเทคนิค Machine Learning', venue:'การประชุมวิชาการระดับชาติด้านเทคโนโลยีสารสนเทศ' },
+      { year:'2567', title:'การจัดการนวัตกรรมดิจิทัลสำหรับองค์กรภาครัฐในภาคตะวันออกเฉียงเหนือ', venue:'วารสารการจัดการเทคโนโลยีสารสนเทศ' },
+      { year:'2567', title:'ระบบ IoT เพื่อการเกษตรอัจฉริยะในพื้นที่จังหวัดกาฬสินธุ์', venue:'การประชุมวิชาการระดับนานาชาติ (IEEE)' },
+    ];
+
+    const mapSrc = 'https://www.google.com/maps?q=16.6339736,103.7706632&z=16&hl=th&output=embed';
+
+    return {
+      primaryColor: primary,
+      primaryDark: darken(primary),
+      ctaColor: cta,
+      academicYear: this.props.academicYear ?? '2570',
+      showCalendar: this.props.showCalendar ?? true,
+
+      menuOpen,
+      menuIcon: menuOpen ? 'close' : 'menu',
+      menuStyle: 'position:fixed;top:71px;left:0;right:0;z-index:55;' + (menuOpen ? 'display:block;' : 'display:none;'),
+      toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
+      closeMenu: () => this.setState({ menuOpen: false }),
+
+      navItems,
+      isHome, isAbout, isPrograms, isPeople, isNews, isResearch, isContact,
+      pageTitle: pm.label, pageIcon: pm.icon, pageDesc: pm.desc,
+      programs, people, newsAll, researchAreas, publications, mapSrc,
+
+      stats: [
+        { n:'2', label:'หลักสูตรที่เปิดรับ' },
+        { n:'4 ปี', label:'ระยะเวลาเรียน' },
+        { n:'100%', label:'เน้นปฏิบัติจริง' },
+      ],
+
+      calendar: [
+        { n:'1', label:'รับสมัครออนไลน์', date:'1 ก.ค. – 3 ส.ค. 69', ...chip.amber },
+        { n:'2', label:'ประกาศรายชื่อผู้มีสิทธิ์สอบ', date:'6 ส.ค. 69', ...chip.blue },
+        { n:'3', label:'สอบคัดเลือก / สัมภาษณ์', date:'8 ส.ค. 69', ...chip.blue },
+        { n:'4', label:'ประกาศผู้ผ่านการคัดเลือก', date:'13 ส.ค. 69', ...chip.green },
+        { n:'5', label:'รายงานตัว / ขึ้นทะเบียน', date:'14–31 ส.ค. 69', ...chip.green },
+        { n:'6', label:'เปิดภาคเรียน', date:'21 มิ.ย. 70', ...chip.green },
+      ],
+
+      quicklinks: [
+        { icon:'edit_document', label:'สมัครเรียน', desc:'สมัครออนไลน์ผ่านระบบรับสมัคร', href:'#programs' },
+        { icon:'calendar_month', label:'ปฏิทินรับสมัคร', desc:'กำหนดการสำคัญทุกรอบ', href:'#home' },
+        { icon:'menu_book', label:'หลักสูตรที่เปิดสอน', desc:'รายละเอียดแต่ละหลักสูตร', href:'#programs' },
+        { icon:'payments', label:'ค่าเทอม & ทุน', desc:'อัตราค่าเล่าเรียนและทุนการศึกษา', href:'#programs' },
+        { icon:'help', label:'คำถามที่พบบ่อย', desc:'รวมข้อสงสัยของผู้สมัคร', href:'#contact' },
+        { icon:'support_agent', label:'ติดต่อเรา', desc:'ช่องทางติดต่อสาขา', href:'#contact' },
+      ],
+
+      announceList: [
+        { icon:'workspace_premium', tag:'ทุนการศึกษา', title:'เปิดรับสมัครทุนเรียนดี สำหรับนักศึกษาใหม่ ปีการศึกษา 2570', date:'20 มิ.ย. 69' },
+        { icon:'campaign', tag:'ประชาสัมพันธ์', title:'ตารางแนะแนวสัญจร โรงเรียนในเขตพื้นที่จังหวัดกาฬสินธุ์', date:'15 มิ.ย. 69' },
+        { icon:'description', tag:'รับสมัคร', title:'รอบ 2 โควตา รับตรง สำหรับนักเรียนในเขตภาคอีสาน', date:'12 มิ.ย. 69' },
+      ],
+
+      news: [
+        { id:'news-1', date:'10 ก.ค. 69', author:'งานประชาสัมพันธ์', title:'นักศึกษาสาขาคว้ารางวัลแข่งขันพัฒนาโปรแกรมระดับภูมิภาค', excerpt:'ทีมนักศึกษาชั้นปีที่ 3 คว้ารางวัลรองชนะเลิศจากเวทีแข่งขันพัฒนาซอฟต์แวร์...' },
+        { id:'news-2', date:'9 ก.ค. 69', author:'งานวิชาการ', title:'อบรมเชิงปฏิบัติการ AI & Data Science สำหรับนักศึกษา', excerpt:'สาขาจัดอบรมเสริมทักษะปัญญาประดิษฐ์และการวิเคราะห์ข้อมูลให้นักศึกษาทุกชั้นปี...' },
+        { id:'news-3', date:'29 มิ.ย. 69', author:'งานกิจการนักศึกษา', title:'โครงการสัมมนา “เส้นทางอาชีพสายไอที” รุ่นพี่พบรุ่นน้อง', excerpt:'ศิษย์เก่าร่วมแบ่งปันประสบการณ์การทำงานจริงในสายเทคโนโลยีให้กับรุ่นน้อง...' },
+      ],
+
+      heroSlides,
+      featSlides,
+      feat,
+      setRelRef,
+      relatedLoop: (() => {
+        const related = [
+          { name:'มหาวิทยาลัยกาฬสินธุ์', en:'Kalasin University', icon:'account_balance', tint:'#1b52a4', tint2:'#2e79d6', href:'#' },
+          { name:'คณะวิทยาศาสตร์และเทคโนโลยีสุขภาพ', en:'Faculty of Science and Health Technology', icon:'science', tint:'#0f7a5a', tint2:'#1aa574', href:'#' },
+          { name:'สำนักส่งเสริมวิชาการและงานทะเบียน', en:'Office of Academic Promotion', icon:'app_registration', tint:'#6a3fb0', tint2:'#8a5fd0', href:'#' },
+          { name:'ระบบรับสมัครออนไลน์', en:'admission.ksu.ac.th', icon:'how_to_reg', tint:'#c0392b', tint2:'#e05a4b', href:'#' },
+          { name:'สำนักวิทยบริการ (ห้องสมุด)', en:'Academic Resource Center', icon:'local_library', tint:'#2c6e9b', tint2:'#4a95c4', href:'#' },
+        ];
+        return related.concat(related);
+      })(),
+    };
+  }
+}
+</script>
+</body>
+</html>
